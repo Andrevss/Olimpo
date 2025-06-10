@@ -1,0 +1,14 @@
+﻿# .gitignore
+# Ignorar arquivos do Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.cache
+*.dbmdl
+
+# Ignore binários e builds
+bin/
+obj/
+
