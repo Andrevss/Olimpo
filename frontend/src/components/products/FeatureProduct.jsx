@@ -11,15 +11,15 @@ const FeatureProduct = () => {
 
 
     return (
-        <main className='w-[90%] flex flex-wrap justify-center gap-10 mx-auto'>
-            <div className='w-full text-center font-grotesk text-3xl font-bold text-[#1C1C1C] pb-[45px]'>
+        <main className='w-[90%] flex flex-wrap justify-center gap-8 mx-auto'>
+            <div className='w-full text-center font-grotesk text-3xl font-bold text-[#1C1C1C] pb-[10px]'>
                 <h1 className='relative inline-block after:block after:w-[100px] after:h-[2px] after:bg-[#F2A541] after:mt-1 after:mx-auto'>
                     Nossos Produtos
                 </h1>
             </div>
 
             {produtos.map((produto, i) => (
-                <div key={i} className="flex flex-col items-center w-[300px]">
+                <div key={i} className="flex flex-col items-center w-[350px]">
                     <div className='relative group w-full h-auto overflow-hidden'>
                         {/* Imagem da frente */}
                         <img
