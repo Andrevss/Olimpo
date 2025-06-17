@@ -10,6 +10,9 @@ namespace backend.Models
         [ForeignKey("Order_id")]
         public int Order_id { get; set; }
         public Order Order { get; set; }
+        [ForeignKey("User_id")]
+        public int User_id { get; set; }
+        public User User { get; set; }
         [Required]
         public required string Method { get; set; }
         [Required]

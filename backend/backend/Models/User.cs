@@ -15,8 +15,7 @@ namespace backend.Models
         public required string Password { get; set; }
         [Required]
         public required string PhoneNumber { get; set; }
-        [ForeignKey("Address_id")]
-        public int Address_id { get; set; }
-        public Address Address { get; set; }
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
+        public ICollection<Address> Addresses { get; set; } = new List<Address>();
     }
 }
