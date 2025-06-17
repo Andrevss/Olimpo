@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
 {
@@ -19,6 +20,15 @@ namespace backend.Models
         [Required]
         public required string ZipCode { get; set; }
         public string Complement { get; set; }
+        [ForeignKey("User_id")]
+        public int User_id { get; set; }
+        public User User { get; set; }
 
-    }
+        public ICollection<Order>? Orders { get; set; }
+
+        public Address()
+        {
+            Orders = new List<Order>();
+
+        }
 }

@@ -19,5 +19,7 @@ namespace backend.Models
         public required DateTime OrderDate { get; set; }
         [Required]
         public required string TotalPrice { get; set; }
+
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }
