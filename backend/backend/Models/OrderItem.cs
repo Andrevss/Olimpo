@@ -6,12 +6,10 @@ namespace backend.Models
     public class OrderItem
     {
         [Key]
-        public int oItem_Id { get; set; }
-        [ForeignKey("Order_id")]
-        public int Order_Id { get; set; }
+        public int oItemId { get; set; }
+        public int OrderId { get; set; }
         public Order Order { get; set; }
-        [ForeignKey("Product_id")]
-        public int Product_Id { get; set; }
+        public int ProductId { get; set; }
         public Product Product { get; set; }
         [Required]
         public int Quantity { get; set; }

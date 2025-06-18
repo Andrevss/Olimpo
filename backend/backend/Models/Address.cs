@@ -5,7 +5,7 @@ namespace backend.Models
     public class Address
     {
         [Key]
-        public int Address_id { get; set; }
+        public int AddressId { get; set; }
         [Required]
         public required string Street { get; set; }
         [Required]
@@ -18,7 +18,7 @@ namespace backend.Models
         public required string State { get; set; }
         [Required]
         public required string ZipCode { get; set; }
-        public string Complement { get; set; }
+        public string? Complement { get; set; }
 
     }
 }

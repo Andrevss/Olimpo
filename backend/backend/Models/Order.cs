@@ -7,10 +7,8 @@ namespace backend.Models
     {
         [Key]
         public int Order_id { get; set; }
-        [ForeignKey("User_id")]
         public int User_id { get; set; }
         public User User { get; set; }
-        [ForeignKey("Address_id")]
         public int Address_id { get; set; }
         public Address Address { get; set; }
         [Required]
