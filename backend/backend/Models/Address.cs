@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
 {
@@ -18,7 +19,16 @@ namespace backend.Models
         public required string State { get; set; }
         [Required]
         public required string ZipCode { get; set; }
+
         public string? Complement { get; set; }
 
-    }
+        public int User_id { get; set; }
+        public User User { get; set; }
+        public ICollection<Order>? Orders { get; set; }
+
+        public Address()
+        {
+            Orders = new List<Order>();
+
+        }
 }
