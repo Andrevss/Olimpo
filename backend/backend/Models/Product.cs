@@ -6,22 +6,24 @@ namespace backend.Models
     public class Product
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ProductId { get; set; }
         [Required]
-        public required string Product_name { get; set; }
+        public required string ProductName { get; set; }
         [Required]
-        public string Product_description { get; set; }
+        public string ProductDescription { get; set; }
         [Required]
-        public required string Product_price { get; set; }
+        public required string ProductPrice { get; set; }
         [Required]
         public int Stoke { get; set; }
+
+        // relacionamento 1 para muitos entre Category e Product (cada categoria pode ter vários produtos)
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         public bool isActive { get; set; }
+
+        // relacionamento 1 para muitos entre Product e OrderItem (cada produto pode estar em vários pedidos)
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
-        public Product()
-        {
-            OrderItems = new List<OrderItem>();
-        }
+        
     }
 }

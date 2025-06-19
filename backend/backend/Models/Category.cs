@@ -1,19 +1,17 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
 {
     public class Category
     {
-        public Category()
-        {
-            Products = new Collection<Product>();
-        }
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CategoryId { get; set; }
         [Required]
-        public required string Category_name { get; set; }
+        public required string CategoryName { get; set; }
         public string? Description { get; set; }
-        public ICollection<Product>? Products { get; set; }
+        public ICollection<Product>? Products { get; set; } = new List<Product>();
     }
 }

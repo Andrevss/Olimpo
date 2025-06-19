@@ -6,6 +6,7 @@ namespace backend.Models
     public class Address
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AddressId { get; set; }
         [Required]
         public required string Street { get; set; }
@@ -22,7 +23,7 @@ namespace backend.Models
 
         public string? Complement { get; set; }
 
-        public int User_id { get; set; }
+        public int UserId { get; set; }
         public User User { get; set; }
         public ICollection<Order>? Orders { get; set; }
 
@@ -31,4 +32,5 @@ namespace backend.Models
             Orders = new List<Order>();
 
         }
+    }
 }

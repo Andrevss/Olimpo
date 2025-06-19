@@ -6,7 +6,8 @@ namespace backend.Models
     public class User
     {
         [Key]
-        public int User_id { get; set; }
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public int UserId { get; set; }
         [Required]
         public required string Name { get; set; }
         [Required]
@@ -15,10 +16,7 @@ namespace backend.Models
         public required string Password { get; set; }
         [Required]
         public required string PhoneNumber { get; set; }
-        public int Address_id { get; set; }
-        public Address Address { get; set; }
-
-        public ICollection<Order> Orders { get; set; } = new List<Order>();
+		public ICollection<Order> Orders { get; set; } = new List<Order>();
         public ICollection<Address> Addresses { get; set; } = new List<Address>();
 
     }
