@@ -18,107 +18,73 @@ namespace backend.Controllers
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Address>>> Get()
-        {
-            try
-            {
+        { 
                 var addresses = await _context.Addresses
                     .Include(a => a.User)
                     .AsNoTracking().ToListAsync();
 
                 if (addresses == null)
                 {
-                    return NotFound();
+                _logger.LogWarning($"Address with ID {id} not founded.");
+                return NotFound();
                 }
 
-                return addresses;
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database. Please try again later.");
-            }
+            return addresses;
+            
         }
 
         [HttpGet("{id}", Name = "GetAddress")]
         public async Task<ActionResult<Address>> Get(int id)
         {
-            try
-            {
                 var address = await _context.Addresses
                     .Include(a => a.User)
                     .AsNoTracking().FirstOrDefaultAsync(a => a.AddressId == id);
                 if (address == null)
                 {
+                    _logger.LogWarning($"Address with ID {id} not founded.");
                     return NotFound();
                 }
                 return address;
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database. Please try again later.");
-            }
         }
 
         [HttpPost]
         public async Task<ActionResult<Address>> Post(Address address)
         {
-            try
-            {
                 if (address == null)
                 {
+                    _logger.LogWarning("Wrong data");
                     return BadRequest();
                 }
                 _context.Addresses.Add(address);
                 _context.SaveChanges();
                 return CreatedAtRoute("GetAddress", new { id = address.AddressId }, address);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error saving data to the database. Please try again later.");
-            }
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<Address>> Put(int id, Address address)
         {
-            try
-            {
                 if (id != address.AddressId)
                 {
+                    _logger.LogWarning($"Address ID mismatch: {id} != {address.AddressId}");
                     return BadRequest();
                 }
                 _context.Entry(address).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 return NoContent();
             }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error updating data in the database. Please try again later.");
-            }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            try
-            {
                 var address = await _context.Addresses.FindAsync(id);
                 if (address == null)
                 {
+                    _logger.LogWarning($"Address with ID {Id} not found for deletion.", id);
                     return NotFound();
                 }
                 _context.Addresses.Remove(address);
                 _context.SaveChanges();
                 return NoContent();
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error deleting data from the database. Please try again later.");
-            }
-        }
     }
 }

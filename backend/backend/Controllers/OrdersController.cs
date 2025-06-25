@@ -19,8 +19,6 @@ namespace backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> Get()
         {
-            try
-            {
                 var orders =  await _context.Orders
                     .Include(o => o.OrderItems)
                         .ThenInclude(oi => oi.Product)
@@ -30,22 +28,15 @@ namespace backend.Controllers
                     .AsNoTracking().ToListAsync();
                 if(orders == null)
                 {
-                    return NotFound();
+                _logger.LogWarning("Address not founded.");
+                return NotFound();
                 }
                 return orders;
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database. Please try again later.");
-            }
         }
 
         [HttpGet("{id}", Name = "GetOrder")]
         public async Task<ActionResult<Order>> Get(int id)
         {
-            try
-            {
                 var order = _context.Orders
                     .Include(o => o.OrderItems)
                         .ThenInclude(oi => oi.Product)
@@ -55,46 +46,33 @@ namespace backend.Controllers
                     .AsNoTracking().Take(10).FirstOrDefault(o => o.OrderId == id);
                 if (_context.Orders == null)
                 {
+                    _logger.LogWarning($"Address with ID {id} not founded.");
                     return NotFound();
                 }
                 return order;
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database. Please try again later.");
-            }
         }
 
         [HttpPost]
         public async Task<ActionResult> Post(Order order)
         {
-            try
-            {
                 if(order == null)
                 {
-                    return BadRequest("Order cannot be null.");
+                _logger.LogWarning("Wrong data");
+                return BadRequest("Order cannot be null.");
                 }
 
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
 
                 return new CreatedAtRouteResult("GetOrder", new { id = order.OrderId }, order);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error saving data to the database. Please try again later.");
-            }
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, Order order)
         {
-            try
-            {
                 if (id != order.OrderId)
                 {
+                    _logger.LogWarning($"Category ID mismatch: expected {id}, received {order.OrderId}.");
                     return BadRequest("Category ID mismatch.");
                 }
 
@@ -102,23 +80,16 @@ namespace backend.Controllers
                 await _context.SaveChangesAsync();
 
                 return Ok(order);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error updating data in the database. Please try again later.");
-            }
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            try
-            {
                 var product = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
 
                 if (product == null)
                 {
+                    _logger.LogWarning($"Category with ID {id} not found.");
                     return NotFound();
                 }
 
@@ -126,12 +97,6 @@ namespace backend.Controllers
                 _context.SaveChanges();
 
                 return Ok(product);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error deleting data from the database. Please try again later.");
-            }
         }
     }
 }
