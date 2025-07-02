@@ -3,15 +3,20 @@ import { MdEmail } from "react-icons/md";
 import { IoMdPhonePortrait } from "react-icons/io";
 import { FaInstagram } from "react-icons/fa";
 import { FaTiktok } from "react-icons/fa6";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { PiList } from "react-icons/pi";
+import { useCart } from '../context/CartProvider';
 
 
 const Header = () => {
 
     const { pathname } = useLocation()
     const [showSidebar, setShowSidebar] = useState(true)
-    const wishList_count = 4
+    const navigate = useNavigate();
+    const {cartCount} = useCart();
+    const redirect = ()=> {
+        navigate('/shipping')
+    };
 
     return (
         <header className='w-full bg-white'>
@@ -57,7 +62,7 @@ const Header = () => {
                             <div className='flex justify-between md-lg:justify-center items-center flex-wrap pl-8'>
                                 <ul className='font-grotesk flex justify-center items-center gap-7 text-lg font-bold  uppercase md-lg:hidden '>
                                     <li>
-                                        <Link className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#B3B3B3]'}`}>Home</Link>
+                                        <Link className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Home</Link>
                                     </li>
                                     <li>
                                         <Link className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === 'aboutUs' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Quem Somos</Link>
@@ -72,10 +77,12 @@ const Header = () => {
                             <div className='flex md-lg:hidden justify-center items-center gap-5'>
                                 <div className='flex justify-center gap-5'>
                                     <div className='relative flex justify-center items-center cursor-pointer w-[35px] h-[35px]'>
-                                        <span className='border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-lg font-bold uppercase'>carrinho</span>
-                                        <div className='w-[18px] h-[18px] absolute bg-red-500 rounded-full text-white flex justify-center items-center -top-[3px] -right-[42px]'>
-                                            {wishList_count}
-                                        </div>
+                                        <span onClick={redirect} className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-lg font-bold uppercase ${pathname === '/shipping' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>carrinho</span>
+                                        {cartCount > 0 && (
+                                            <div className='w-[18px] h-[18px] absolute bg-[#F2A541] rounded-full text-white text-[14px] font-bold flex justify-center items-center -top-[3px] -right-[42px] font-grotesk'>
+                                            <span>{cartCount}</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>

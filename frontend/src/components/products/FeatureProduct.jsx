@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MdOutlineShoppingCart } from "react-icons/md";
+import { useCart } from '../../context/CartProvider';
 
 
 const FeatureProduct = () => {
     const produtos = [
-        { id: 1, nome: 'romário', preco: 'R$ 90,90', imagemFrente: '1.png', imagemCostas: '1-back.png' },
+        { id: 1, nome: 'Tubarão', preco: 'R$ 80,00', imagemFrente: '1.png', imagemCostas: '1-back.png' },
         { id: 2, nome: 'neymar', preco: 'R$ 89,90', imagemFrente: '2.png', imagemCostas: '2-back.png' },
-
     ];
+    const [sizeOption, setSizeOption] = useState({});
+    const { addToCart } = useCart();
 
 
     return (
@@ -37,10 +39,39 @@ const FeatureProduct = () => {
 
                         {/* Botão do carrinho */}
                         <ul className='flex justify-center items-center gap-2 absolute bottom-[-40px] left-1/2 transform -translate-x-1/2 opacity-0 transition-all duration-500 group-hover:bottom-3 group-hover:opacity-100'>
-                            <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#F2A541] hover:text-white hover:rotate-[720deg] transition-all'>
+                            <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#F2A541] hover:text-white hover:rotate-[720deg] transition-all'
+                                onClick={() => {
+                                    const tamanhoSelecionado = sizeOption[produto.id];
+                                    if (!tamanhoSelecionado) {
+                                        alert("Selecione um tamanho antes de adicionar ao carrinho.");
+                                        return;
+                                    }
+
+                                    addToCart(produto, tamanhoSelecionado);
+                                }}>
                                 <MdOutlineShoppingCart />
                             </li>
+                            <li>
+                                <select
+                                    id='sizeOption'
+                                    name='sizeOption'
+                                    className='w-[38px] h-[30px] justify-center items-center rounded-lg '
+                                    value={sizeOption[produto.id] || ''}
+                                    onChange={(e) => setSizeOption(prev => ({
+                                        ...prev,
+                                        [produto.id]: e.target.value
+                                    }))}
+                                >
+                                    <option value=''></option>
+                                    <option value='PP'>PP</option>
+                                    <option value='P'>P</option>
+                                    <option value='M'>M</option>
+                                    <option value='G'>G</option>
+                                    <option value='GG'>GG</option>
+                                </select>
+                            </li>
                         </ul>
+
                     </div>
 
                     {/* Nome e preço abaixo da imagem */}
