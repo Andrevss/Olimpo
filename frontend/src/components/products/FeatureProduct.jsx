@@ -6,7 +6,6 @@ import { useCart } from '../../context/CartProvider';
 const FeatureProduct = () => {
     const produtos = [
         { id: 1, nome: 'Tubarão', preco: 'R$ 80,00', imagemFrente: '1.png', imagemCostas: '1-back.png' },
-        { id: 2, nome: 'neymar', preco: 'R$ 89,90', imagemFrente: '2.png', imagemCostas: '2-back.png' },
     ];
     const [sizeOption, setSizeOption] = useState({});
     const { addToCart } = useCart();
@@ -38,7 +37,7 @@ const FeatureProduct = () => {
                         />
 
                         {/* Botão do carrinho */}
-                        <ul className='flex justify-center items-center gap-2 absolute bottom-[-40px] left-1/2 transform -translate-x-1/2 opacity-0 transition-all duration-500 group-hover:bottom-3 group-hover:opacity-100'>
+                        <ul className='flex justify-center items-center gap-2 absolute bottom-[-40px] left-1/2 transform -translate-x-1/2 opacity-0 transition-all duration-700 group-hover:bottom-3 group-hover:opacity-100'>
                             <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#F2A541] hover:text-white hover:rotate-[720deg] transition-all'
                                 onClick={() => {
                                     const tamanhoSelecionado = sizeOption[produto.id];

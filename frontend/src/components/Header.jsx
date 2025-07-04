@@ -62,7 +62,7 @@ const Header = () => {
                             <div className='flex justify-between md-lg:justify-center items-center flex-wrap pl-8'>
                                 <ul className='font-grotesk flex justify-center items-center gap-7 text-lg font-bold  uppercase md-lg:hidden '>
                                     <li>
-                                        <Link className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Home</Link>
+                                        <Link to="/" className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Home</Link>
                                     </li>
                                     <li>
                                         <Link className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === 'aboutUs' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Quem Somos</Link>
