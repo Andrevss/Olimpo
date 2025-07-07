@@ -39,7 +39,7 @@ const Banner = () => {
                             >
                             {
                                 [1, 2, 3, 4].map((img, i) => <Link key ={i} to='#'>
-                                    <img src={`http://localhost:3000/images/banner/${img}.png`} alt="" />
+                                    <img src={`/Images/banner/${img}.png`} alt="" />
                                 </Link> )
                             }
                             </Carousel>

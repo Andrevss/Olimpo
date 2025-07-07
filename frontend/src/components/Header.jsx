@@ -51,7 +51,7 @@ const Header = () => {
                         <div className='md-lg:w-full md-lg:pt-4'>
                             <div className='flex justify-between items-center'>
                                 <Link to='/'>
-                                    <img className="w-40 h-auto" src="http://localhost:3000/images/logo1.png" alt="" />
+                                    <img className="w-40 h-auto" src="/Images/logo1.png" alt="" />
                                 </Link>
                                 <div className='justify-center items-center w-[30px] h-rounded-sm cursor-pointer lg:hidden md-lg:flex xl:hidden hidden' onClick={() => setShowSidebar(false)}>
                                     <span> <PiList /></span>
