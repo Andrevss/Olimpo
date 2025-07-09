@@ -14,7 +14,7 @@ const Shipping = () => {
         console.log(data)
     };
     const [isEditing, setIsEditing] = useState(true)
-
+    const [formData, setFormData] = useState({});
     const { cartItems } = useCart();
 
     const totalItens = cartItems.reduce((acc, item) => acc + item.quantidade, 0);
@@ -31,7 +31,7 @@ const Shipping = () => {
             unitPrice: parseFloat(item.preco.replace('R$', '').replace(',', '.')),
         }));
 
-        const response = await fetch("/api/payment", {
+        const response = await fetch("http://localhost:5000/api/payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(items),
@@ -183,6 +183,8 @@ const Shipping = () => {
                                                                 type="button"
                                                                 onClick={handleSubmit((data) => {
                                                                     onSubmit(data);
+                                                                    setFormData(data);
+                                                                    setIsEditing(false);
                                                                 })}
                                                                 className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
                                                             >
@@ -237,33 +239,33 @@ const Shipping = () => {
                                         <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='name'>Nome</label>
-                                                <p className="">{watch('nome')}</p>
+                                                <p className="">{formData.nome}</p>
                                             </div>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='phone'>Telefone</label>
-                                                <p className="">{watch('telefone')}</p>
+                                                <p className="">{formData.nome}</p>
                                             </div>
                                         </section>
 
                                         <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='rua'>Rua</label>
-                                                <p className="">{watch('rua')}</p>
+                                                <p className="">{formData.nome}</p>
                                             </div>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='bairro'>Bairro</label>
-                                                <p className="">{watch('bairro')}</p>
+                                                <p className="">{formData.nome}</p>
                                             </div>
 
                                         </section>
                                         <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='cidade'>Cidade</label>
-                                                <p className="">{watch('cidade')}</p>
+                                                <p className="">{formData.nome}</p>
                                             </div>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='numero'>Número</label>
-                                                <p>{watch('numero')}</p>
+                                                <p>{formData.nome}</p>
                                             </div>
                                         </section>
                                         {watch('complemento') !== null(
