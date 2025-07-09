@@ -169,7 +169,7 @@ const Shipping = () => {
                                                             <input
                                                                 {...register('complemento')}
                                                                 type='text'
-                                                                className={`w-full px-3 py-2 rounded-md ${errors.bairro ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                className={`w-full px-3 py-2 rounded-md border border-slate-200`}
                                                                 name='complemento'
                                                                 id='complemento'
                                                                 placeholder='Insira detalhes adicionais a sua entrega'

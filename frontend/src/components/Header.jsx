@@ -13,8 +13,8 @@ const Header = () => {
     const { pathname } = useLocation()
     const [showSidebar, setShowSidebar] = useState(true)
     const navigate = useNavigate();
-    const {cartCount} = useCart();
-    const redirect = ()=> {
+    const { cartCount } = useCart();
+    const redirect = () => {
         navigate('/shipping')
     };
 
@@ -50,11 +50,22 @@ const Header = () => {
                     <div className='h-[80px] md-lg:h-[100p] flex justify-between items-center flex-wrap'>
                         <div className='md-lg:w-full md-lg:pt-4'>
                             <div className='flex justify-between items-center'>
+                                <div className='justify-center items-center w-[30px] h-rounded-sm cursor-pointer lg:hidden md-lg:flex xl:hidden hidden' onClick={() => setShowSidebar(false)}>
+                                    <span> <PiList /></span>
+                                </div>
                                 <Link to='/'>
                                     <img className="w-40 h-auto" src="/Images/logo1.png" alt="" />
                                 </Link>
-                                <div className='justify-center items-center w-[30px] h-rounded-sm cursor-pointer lg:hidden md-lg:flex xl:hidden hidden' onClick={() => setShowSidebar(false)}>
-                                    <span> <PiList /></span>
+                                <div className='relative lg:hidden md-lg:flex xl:hidden hidden cursor-pointer' onClick={redirect}>
+                                    <span className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-lg font-bold uppercase ${pathname === '/shipping' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>
+                                        carrinho
+                                    </span>
+
+                                    {cartCount > 0 && (
+                                        <div className='absolute w-[18px] h-[18px] bg-[#F2A541] rounded-full text-white text-[12px] font-bold flex justify-center items-center -top-2 -right-3 font-grotesk'>
+                                            {cartCount}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -80,7 +91,7 @@ const Header = () => {
                                         <span onClick={redirect} className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-lg font-bold uppercase ${pathname === '/shipping' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>carrinho</span>
                                         {cartCount > 0 && (
                                             <div className='w-[18px] h-[18px] absolute bg-[#F2A541] rounded-full text-white text-[14px] font-bold flex justify-center items-center -top-[3px] -right-[42px] font-grotesk'>
-                                            <span>{cartCount}</span>
+                                                <span>{cartCount}</span>
                                             </div>
                                         )}
                                     </div>
