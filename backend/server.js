@@ -25,9 +25,9 @@ app.post('/api/payment', async (req, res) => {
       currency_id: "BRL"
     })),
     back_urls: {
-      success: "https://seusite.com/sucesso",
-      failure: "https://seusite.com/falha",
-      pending: "https://seusite.com/pendente"
+      success: "https:/http://localhost:3000//approved",
+      failure: "https:/http://localhost:3000//rejected",
+      pending: "https:/http://localhost:3000//pending"
     },
     auto_return: "approved"
   };
