@@ -238,41 +238,41 @@ const Shipping = () => {
                                     <div className='bg-white p-10 shadow-sm rounded-md'>
                                         <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                <label className="font-bold" htmlFor='name'>Nome</label>
+                                                <label className="font-bold" htmlFor='nome'>Nome</label>
                                                 <p className="">{formData.nome}</p>
                                             </div>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                <label className="font-bold" htmlFor='phone'>Telefone</label>
-                                                <p className="">{formData.nome}</p>
+                                                <label className="font-bold" htmlFor='telefone'>Telefone</label>
+                                                <p className="">{formData.telefone}</p>
                                             </div>
                                         </section>
 
                                         <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='rua'>Rua</label>
-                                                <p className="">{formData.nome}</p>
+                                                <p className="">{formData.rua}</p>
                                             </div>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='bairro'>Bairro</label>
-                                                <p className="">{formData.nome}</p>
+                                                <p className="">{formData.bairro}</p>
                                             </div>
 
                                         </section>
                                         <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='cidade'>Cidade</label>
-                                                <p className="">{formData.nome}</p>
+                                                <p className="">{formData.cidade}</p>
                                             </div>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='numero'>Número</label>
-                                                <p>{formData.nome}</p>
+                                                <p>{formData.numero}</p>
                                             </div>
                                         </section>
-                                        {watch('complemento') !== null(
+                                        {formData.complemento &&(
                                             <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                    <label className="font-bold" htmlFor='cidade'>Complemento</label>
-                                                    <p className="">{watch('complemento')}</p>
+                                                    <label className="font-bold" htmlFor='complemento'>Complemento</label>
+                                                    <p className="">{formData.complemento}</p>
                                                 </div>
                                             </section>
                                         )}
