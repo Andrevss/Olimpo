@@ -36,7 +36,6 @@ const Shipping = () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(items),
         });
-
         const data = await response.json();
         if (data?.init_point) {
             window.location.href = data.init_point;
