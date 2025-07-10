@@ -38,8 +38,8 @@ const Banner = () => {
                                 responsive={responsive}
                             >
                             {
-                                [1, 2, 3].map((img, i) => <Link key ={i} to='#'>
-                                    <img src={`http://localhost:3000/images/banner/${img}.png`} alt="" />
+                                [1, 2, 3, 4].map((img, i) => <Link key ={i} to='#'>
+                                    <img src={`/Images/banner/${img}.png`} alt="" />
                                 </Link> )
                             }
                             </Carousel>

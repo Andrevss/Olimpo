@@ -3,15 +3,20 @@ import { MdEmail } from "react-icons/md";
 import { IoMdPhonePortrait } from "react-icons/io";
 import { FaInstagram } from "react-icons/fa";
 import { FaTiktok } from "react-icons/fa6";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { PiList } from "react-icons/pi";
+import { useCart } from '../context/CartProvider';
 
 
 const Header = () => {
 
     const { pathname } = useLocation()
     const [showSidebar, setShowSidebar] = useState(true)
-    const wishList_count = 4
+    const navigate = useNavigate();
+    const { cartCount } = useCart();
+    const redirect = () => {
+        navigate('/shipping')
+    };
 
     return (
         <header className='w-full bg-white'>
@@ -45,19 +50,30 @@ const Header = () => {
                     <div className='h-[80px] md-lg:h-[100p] flex justify-between items-center flex-wrap'>
                         <div className='md-lg:w-full md-lg:pt-4'>
                             <div className='flex justify-between items-center'>
-                                <Link to='/'>
-                                    <img className="w-40 h-auto" src="http://localhost:3000/images/logo1.png" alt="" />
-                                </Link>
                                 <div className='justify-center items-center w-[30px] h-rounded-sm cursor-pointer lg:hidden md-lg:flex xl:hidden hidden' onClick={() => setShowSidebar(false)}>
                                     <span> <PiList /></span>
+                                </div>
+                                <Link to='/'>
+                                    <img className="w-40 h-auto" src="/Images/logo1.png" alt="" />
+                                </Link>
+                                <div className='relative lg:hidden md-lg:flex xl:hidden hidden cursor-pointer' onClick={redirect}>
+                                    <span className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-lg font-bold uppercase ${pathname === '/shipping' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>
+                                        carrinho
+                                    </span>
+
+                                    {cartCount > 0 && (
+                                        <div className='absolute w-[18px] h-[18px] bg-[#F2A541] rounded-full text-white text-[12px] font-bold flex justify-center items-center -top-2 -right-3 font-grotesk'>
+                                            {cartCount}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
                         <nav className='md:lg:w-full '>
                             <div className='flex justify-between md-lg:justify-center items-center flex-wrap pl-8'>
-                                <ul className='font-grotesk flex justify-center items-center gap-7 text-lg font-bold  uppercase md-lg:hidden '>
+                                <ul className='font-grotesk flex justify-center items-center gap-7 text-lg font-bold uppercase md-lg:hidden '>
                                     <li>
-                                        <Link className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#B3B3B3]'}`}>Home</Link>
+                                        <Link to="/" className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Home</Link>
                                     </li>
                                     <li>
                                         <Link className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === 'aboutUs' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Quem Somos</Link>
@@ -72,10 +88,12 @@ const Header = () => {
                             <div className='flex md-lg:hidden justify-center items-center gap-5'>
                                 <div className='flex justify-center gap-5'>
                                     <div className='relative flex justify-center items-center cursor-pointer w-[35px] h-[35px]'>
-                                        <span className='border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-lg font-bold uppercase'>carrinho</span>
-                                        <div className='w-[18px] h-[18px] absolute bg-red-500 rounded-full text-white flex justify-center items-center -top-[3px] -right-[42px]'>
-                                            {wishList_count}
-                                        </div>
+                                        <span onClick={redirect} className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-lg font-bold uppercase ${pathname === '/shipping' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>carrinho</span>
+                                        {cartCount > 0 && (
+                                            <div className='w-[18px] h-[18px] absolute bg-[#F2A541] rounded-full text-white text-[14px] font-bold flex justify-center items-center -top-[3px] -right-[42px] font-grotesk'>
+                                                <span>{cartCount}</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -91,13 +109,13 @@ const Header = () => {
                     <div className={`w-[300px] z-[999] transition-all duration-300 fixed top-0 ${showSidebar ? '-left-[300px]' : 'left-0'} bg-white h-screen py-6 px-8`}>
                         <ul className='font-grotesk flex-col justify-center items-center gap-10 text-sm font-bold uppercase'>
                             <li>
-                                <Link className={`py-2 block ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Home</Link>
+                                <Link className={`py-2 block border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Home</Link>
                             </li>
                             <li>
-                                <Link className={`py-2 block ${pathname === 'aboutUs' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Quem Somos</Link>
+                                <Link className={`py-2 block border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === 'aboutUs' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Quem Somos</Link>
                             </li>
                             <li>
-                                <Link className={`py-2 block ${pathname === 'contact' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Contato</Link>
+                                <Link className={`py-2 block border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === 'contact' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Contato</Link>
                             </li>
                         </ul>
                     </div>
