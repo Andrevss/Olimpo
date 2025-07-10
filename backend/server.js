@@ -1,19 +1,61 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-
-import paymentRoutes from './routes/payment.js';
+const express = require('express');
+const fetch = require('node-fetch');
+const dotenv = require('dotenv');
+const cors = require('cors');
 
 dotenv.config();
+console.log("Token carregado:", process.env.MP_ACCESS_TOKEN);
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/payment', paymentRoutes);
+const PORT = 5000;
+const accessToken = process.env.MP_ACCESS_TOKEN;
+
+app.post('/api/payment', async (req, res) => {
+  const items = req.body;
+
+  const payload = {
+    items: items.map(item => ({
+      id: item.id.toString(),
+      title: item.title,
+      quantity: item.quantity,
+      unit_price: item.unitPrice,
+      currency_id: "BRL"
+    })),
+    back_urls: {
+      success: "https:/http://localhost:3000//approved",
+      failure: "https:/http://localhost:3000//rejected",
+      pending: "https:/http://localhost:3000//pending"
+    },
+    auto_return: "approved"
+  };
+
+  try {
+    const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Erro ao criar preferência:", data);
+      return res.status(500).json({ error: "Erro ao criar preferência", details: data });
+    }
+
+    return res.status(200).json(data);
+  } catch (err) {
+    console.error("Erro no servidor:", err);
+    return res.status(500).json({ error: 'Erro ao criar pagamento', details: err.message });
+  }
+});
 
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
 });

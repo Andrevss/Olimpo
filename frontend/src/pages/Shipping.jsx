@@ -15,7 +15,6 @@ const Shipping = () => {
     };
     const [isEditing, setIsEditing] = useState(true)
     const [formData, setFormData] = useState({});
-
     const { cartItems } = useCart();
 
     const totalItens = cartItems.reduce((acc, item) => acc + item.quantidade, 0);
@@ -37,8 +36,6 @@ const Shipping = () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(items),
         });
-
-
         const data = await response.json();
         if (data?.init_point) {
             window.location.href = data.init_point;
@@ -47,7 +44,7 @@ const Shipping = () => {
         }
     };
 
-    return (
+     return (
         <div>
             <Header />
             {isEditing ? (
@@ -171,7 +168,7 @@ const Shipping = () => {
                                                             <input
                                                                 {...register('complemento')}
                                                                 type='text'
-                                                                className={`w-full px-3 py-2 rounded-md ${errors.bairro ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                className={`w-full px-3 py-2 rounded-md border border-slate-200`}
                                                                 name='complemento'
                                                                 id='complemento'
                                                                 placeholder='Insira detalhes adicionais a sua entrega'
@@ -240,41 +237,41 @@ const Shipping = () => {
                                     <div className='bg-white p-10 shadow-sm rounded-md'>
                                         <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                <label className="font-bold" htmlFor='name'>Nome</label>
+                                                <label className="font-bold" htmlFor='nome'>Nome</label>
                                                 <p className="">{formData.nome}</p>
                                             </div>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                <label className="font-bold" htmlFor='phone'>Telefone</label>
-                                                <p className="">{formData.nome}</p>
+                                                <label className="font-bold" htmlFor='telefone'>Telefone</label>
+                                                <p className="">{formData.telefone}</p>
                                             </div>
                                         </section>
 
                                         <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='rua'>Rua</label>
-                                                <p className="">{formData.nome}</p>
+                                                <p className="">{formData.rua}</p>
                                             </div>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='bairro'>Bairro</label>
-                                                <p className="">{formData.nome}</p>
+                                                <p className="">{formData.bairro}</p>
                                             </div>
 
                                         </section>
                                         <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='cidade'>Cidade</label>
-                                                <p className="">{formData.nome}</p>
+                                                <p className="">{formData.cidade}</p>
                                             </div>
                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                 <label className="font-bold" htmlFor='numero'>Número</label>
-                                                <p>{formData.nome}</p>
+                                                <p>{formData.numero}</p>
                                             </div>
                                         </section>
-                                        {formData.complemento && (
+                                        {formData.complemento &&(
                                             <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
                                                     <label className="font-bold" htmlFor='complemento'>Complemento</label>
-                                                    <p className="">{formData.nome}</p>
+                                                    <p className="">{formData.complemento}</p>
                                                 </div>
                                             </section>
                                         )}
@@ -310,7 +307,6 @@ const Shipping = () => {
                                                 onClick={handleSubmit((data) => {
                                                     onSubmit(data);
                                                     handleFinalizarPedido();
-
                                                 })}
                                                 className='px-5 py-[6px] mt-3 rounded-sm font-extrabold hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
                                             >Finalizar Pedido</button>
