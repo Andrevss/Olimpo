@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { useCart } from '../../context/CartProvider';
-
+import { useNavigate } from 'react-router-dom';
+import produtos from '../../data/products';
 
 const FeatureProduct = () => {
-    const produtos = [
-        { id: 1, nome: 'Tubarão', preco: 'R$ 80,00', imagemFrente: '1.png', imagemCostas: '1-back.png' },
-    ];
     const [sizeOption, setSizeOption] = useState({});
     const { addToCart } = useCart();
-
+    const navigate = useNavigate();
 
     return (
         <main className='w-[90%] flex flex-wrap justify-center gap-8 mx-auto'>
@@ -23,19 +21,19 @@ const FeatureProduct = () => {
                 <div key={i} className="flex flex-col items-center w-[350px]">
                     <div className='relative group w-full h-auto overflow-hidden'>
                         {/* Imagem da frente */}
-                        <img
-                            className='w-full h-full cursor-pointer object-contain absolute transition-opacity duration-500 opacity-100 group-hover:opacity-0'
-                            src={`/Images/products/${produto.imagemFrente}`}
-                            alt=''
-                        />
+                            <img
+                                onClick={() => navigate(`/product/${produto.slug}`)}
+                                className='w-full h-full cursor-pointer object-contain absolute transition-opacity duration-500 opacity-100 group-hover:opacity-0'
+                                src={`/Images/products/${produto.imagemFrente}`}
+                                alt={produto.nome}
+                            />
 
-                        {/* Imagem das costas */}
-                        <img
-                            className='w-full h-full cursor-pointer object-contain transition-opacity duration-500 opacity-0 group-hover:opacity-100'
-                            src={`/Images/products/${produto.imagemCostas}`}
-                            alt=''
-                        />
-
+                            {/* Imagem das costas */}
+                            <img
+                                className='w-full h-full cursor-pointer object-contain transition-opacity duration-500 opacity-0 group-hover:opacity-100'
+                                src={`/Images/products/${produto.imagemCostas}`}
+                                alt=''
+                            />
                         {/* Botão do carrinho */}
                         <ul className='flex justify-center items-center gap-2 absolute bottom-[-40px] left-1/2 transform -translate-x-1/2 opacity-0 transition-all duration-700 group-hover:bottom-3 group-hover:opacity-100'>
                             <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#F2A541] hover:text-white hover:rotate-[720deg] transition-all'

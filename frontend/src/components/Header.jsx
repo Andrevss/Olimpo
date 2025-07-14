@@ -109,13 +109,13 @@ const Header = () => {
                     <div className={`w-[300px] z-[999] transition-all duration-300 fixed top-0 ${showSidebar ? '-left-[300px]' : 'left-0'} bg-white h-screen py-6 px-8`}>
                         <ul className='font-grotesk flex-col justify-center items-center gap-10 text-sm font-bold uppercase'>
                             <li>
-                                <Link className={`py-2 block border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Home</Link>
+                                <Link className={`py-2  border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1  ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Home</Link>
                             </li>
                             <li>
-                                <Link className={`py-2 block border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === 'aboutUs' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Quem Somos</Link>
+                                <Link className={`py-2  border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1  ${pathname === 'aboutUs' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Quem Somos</Link>
                             </li>
                             <li>
-                                <Link className={`py-2 block border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === 'contact' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Contato</Link>
+                                <Link className={`py-2  border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1  ${pathname === 'contact' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Contato</Link>
                             </li>
                         </ul>
                     </div>

@@ -45,7 +45,7 @@ const Footer = () => {
                     </div>
                 </section>
             </div>
-            <div className='w-[90%] flex flex-wrap justify-center items-center text-[#F2A541] mx-auto py-5 text-center text-sm font-grotesk'>
+            <div className='w-[90%] flex flex-wrap justify-center items-center text-[#F2A541] mx-auto mb-6 mt-2 text-center text-sm font-grotesk'>
                 <span>Copyright @2025 All Rights Reserved</span>
             </div>
 

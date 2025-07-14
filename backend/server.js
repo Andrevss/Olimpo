@@ -24,6 +24,10 @@ app.post('/api/payment', async (req, res) => {
       unit_price: item.unitPrice,
       currency_id: "BRL"
     })),
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 5ada6e1956a7bfdb6325ab16f2c605783cd72be7
   };
 
   console.log("Payload final:", JSON.stringify(payload, null, 2));
