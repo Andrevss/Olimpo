@@ -29,7 +29,7 @@ const Details = () => {
         <main className='font-grotesk min-h-screen flex flex-col'>
             <Header />
             <section className='flex-grow mt-5'>
-                <div className='w-[85%] md:w-[80%] sm:w-[90%] lg-w-[90%] h-full mx-auto '>
+                <div className='w-[95%] md:w-[80%] sm:w-[90%] lg-w-[90%] h-full mx-auto '>
                     <div className='flex flex-wrap justify-center gap-4'>
                         <div className='flex'>
                             <div className='flex flex-col gap-2 md:mr-5 md:justify-start mb-4 md:mb-0 mt-[1.25rem]'>
@@ -52,7 +52,7 @@ const Details = () => {
                                 />
                             </div>
                         </div>
-                        <div className=' w-[20%] flex flex-col gap-5 ml-6 sm:ml-0 sm:mt-5 sm:items-center'>
+                        <div className=' w-[30%] flex flex-col gap-5 ml-6 sm:ml-0 sm:mt-5 sm:items-center'>
                             <div className='text-[#0D0D0D]'>
                                 <h3 className='text-3xl font-black relative inline-block p-1 after:block after:h-[2px] after:w-full after:bg-[#F2A541] after:mt-1'>
                                     {produto.nome}
