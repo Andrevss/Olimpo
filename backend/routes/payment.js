@@ -19,12 +19,6 @@ router.post('/', async (req, res) => {
       unit_price: item.unitPrice,
       currency_id: "BRL"
     })),
-    back_urls: {
-      success: "http://localhost:3000/sucesso",
-      failure: "http://localhost:3000/falha",
-      pending: "http://localhost:3000/pendente"
-    },
-    auto_return: "approved"
   };
 
   try {

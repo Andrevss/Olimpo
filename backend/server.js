@@ -24,13 +24,9 @@ app.post('/api/payment', async (req, res) => {
       unit_price: item.unitPrice,
       currency_id: "BRL"
     })),
-    back_urls: {
-      success: "https:/http://localhost:3000//approved",
-      failure: "https:/http://localhost:3000//rejected",
-      pending: "https:/http://localhost:3000//pending"
-    },
-    auto_return: "approved"
   };
+
+  console.log("Payload final:", JSON.stringify(payload, null, 2));
 
   try {
     const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
