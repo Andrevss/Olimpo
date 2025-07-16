@@ -57,10 +57,16 @@ export const CartProvider = ({ children }) => {
         );
     };
 
+    const removeFromCart = (produtoId, tamanho) => {
+        setCartItem((prevItems) =>
+            prevItems.filter(item => !(item.id === produtoId && item.tamanho === tamanho))
+        );
+    };
+
     const cartCount = cartItems.reduce((total, item) => total + item.quantidade, 0)
 
     return (
-        <CartContext.Provider value={{ cartItems, addToCart, cartCount, decreaseQuantity, increaseQuantity }}>
+        <CartContext.Provider value={{ cartItems, addToCart, cartCount, decreaseQuantity, increaseQuantity, removeFromCart }}>
             {children}
         </CartContext.Provider>
     )
