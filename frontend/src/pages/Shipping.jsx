@@ -340,7 +340,7 @@ const Shipping = () => {
                                                     <div className="flex items-center gap-2">
                                                         <button
                                                             onClick={() => decreaseQuantity(item.id, item.tamanho)}
-                                                            className="px-c3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
+                                                            className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
                                                         >
                                                             -
                                                         </button>
