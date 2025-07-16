@@ -15,7 +15,7 @@ const Shipping = () => {
     };
     const [isEditing, setIsEditing] = useState(true)
     const [formData, setFormData] = useState({});
-    const { cartItems } = useCart();
+    const { cartItems, decreaseQuantity, increaseQuantity } = useCart();
 
     const totalItens = cartItems.reduce((acc, item) => acc + item.quantidade, 0);
     const totalGeral = cartItems.reduce((acc, item) => {
@@ -267,7 +267,7 @@ const Shipping = () => {
                                                 <p>{formData.numero}</p>
                                             </div>
                                         </section>
-                                        {formData.complemento &&(
+                                        {formData.complemento && (
                                             <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
                                                     <label className="font-bold" htmlFor='complemento'>Complemento</label>
@@ -328,12 +328,32 @@ const Shipping = () => {
                                         <h2 className='text-[#0D0D0D] font-bold pb-3 font-grotesk'>Informações da Compra</h2>
                                         <ul className='font-grotesk'>
                                             {cartItems.map((item, index) => (
-                                                <div className='flex flex-wrap gap-1 mb-2 w-full'>
-                                                    <img src={`/Images/products/${item.imagemFrente}`} alt={item.nome} className="w-[150px]" />
-                                                    <li className='flex flex-col justify-center px-10 gap-1' key={index}>
-                                                        <strong> Camisa {item.nome}</strong> {item.preco} - Tamanho: {item.tamanho} - Quantidade: {item.quantidade}
-                                                    </li>
+                                                <div className="flex justify-between items-center w-full mb-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <img src={`/Images/products/${item.imagemFrente}`} alt={item.nome} className="w-[150px]" />
+                                                        <li className="flex flex-col justify-center gap-3">
+                                                            <strong>{item.nome}</strong>
+                                                            {item.preco} - Tamanho: {item.tamanho}
+                                                        </li>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-2">
+                                                        <button
+                                                            onClick={() => decreaseQuantity(item.id, item.tamanho)}
+                                                            className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
+                                                        >
+                                                            -
+                                                        </button>
+                                                        <span className="font-semibold w-6 text-center">{item.quantidade}</span>
+                                                        <button
+                                                            onClick={() => increaseQuantity(item.id, item.tamanho)}
+                                                            className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
                                                 </div>
+
                                             ))}
                                         </ul>
                                     </div>
