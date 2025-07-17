@@ -18,12 +18,8 @@ const Details = () => {
             alert('Selecione um tamanho!');
             return;
         }
-
         addToCart(produto, tamanhoSelecionado);
     };
-
-
-
 
     return (
         <main className='font-grotesk min-h-screen flex flex-col'>

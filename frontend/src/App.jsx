@@ -7,6 +7,7 @@ import Pending from './pages/Pending';
 import Rejected from './pages/Rejected';
 import Approved from './pages/Approved';
 import Details from './pages/Details';
+import AboutUs from './pages/AboutUs';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/shipping' element={<Shipping />} />
           <Route path='/product/:slug' element={<Details />} />
+          <Route path='/AboutUs' element={<AboutUs />} />
           <Route path='/pending' element={<Pending />} />
           <Route path='/approved' element={<Approved />} />
           <Route path='/rejected' element={<Rejected />} />
