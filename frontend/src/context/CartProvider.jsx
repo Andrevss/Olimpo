@@ -32,11 +32,41 @@ export const CartProvider = ({ children }) => {
         });
     };
 
+    const decreaseQuantity = (produtoId, tamanho) => {
+        setCartItem((prevItems) => {
+            return prevItems.flatMap(item => {
+                if (item.id === produtoId && item.tamanho === tamanho) {
+                    if (item.quantidade > 1) {
+                        return { ...item, quantidade: item.quantidade - 1 };
+                    }
+
+                    return [];
+                }
+                return item;
+            });
+        });
+    };
+
+    const increaseQuantity = (id, tamanho) => {
+        setCartItem((prevItems) =>
+            prevItems.map(item =>
+                item.id === id && item.tamanho === tamanho
+                    ? { ...item, quantidade: item.quantidade + 1 }
+                    : item
+            )
+        );
+    };
+
+    const removeFromCart = (produtoId, tamanho) => {
+        setCartItem((prevItems) =>
+            prevItems.filter(item => !(item.id === produtoId && item.tamanho === tamanho))
+        );
+    };
 
     const cartCount = cartItems.reduce((total, item) => total + item.quantidade, 0)
 
     return (
-        <CartContext.Provider value={{ cartItems, addToCart, cartCount }}>
+        <CartContext.Provider value={{ cartItems, addToCart, cartCount, decreaseQuantity, increaseQuantity, removeFromCart }}>
             {children}
         </CartContext.Provider>
     )
