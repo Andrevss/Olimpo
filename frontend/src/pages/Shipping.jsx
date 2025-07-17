@@ -15,7 +15,7 @@ const Shipping = () => {
     };
     const [isEditing, setIsEditing] = useState(true)
     const [formData, setFormData] = useState({});
-    const { cartItems, decreaseQuantity, increaseQuantity } = useCart();
+    const { cartItems, decreaseQuantity, increaseQuantity, removeFromCart } = useCart();
 
     const totalItens = cartItems.reduce((acc, item) => acc + item.quantidade, 0);
     const totalGeral = cartItems.reduce((acc, item) => {
@@ -54,7 +54,7 @@ const Shipping = () => {
                             <div className='w-[67%] md-lg:w-full'>
                                 <div className='flex flex-col gap-3'>
                                     <div className='bg-white p-10 shadow-sm rounded-md'>
-                                        <h2 className='text-[#0D0D0D] font-bold pb-3 font-grotesk'>Informações para Entrega</h2>
+                                        <h2 className='text-[#0D0D0D] font-bold pb-3 font-grotesk text-lg'>Informações para Entrega</h2>
                                         <form>
                                             <div className='flex flex-col gap-1 mb-2 w-full font-grotesk'>
                                                 <select
@@ -205,7 +205,7 @@ const Shipping = () => {
                                 <section className='w-[33%] md-lg:w-full'>{/* resumo do pedido */}
                                     <div className='pl-3 md-lg:pl-0 md-lg:mt-5'>
                                         <div className='bg-white font-grotesk text-[#0D0D0D] flex flex-col p-3'>
-                                            <h2 className='text-x1 font-bold'>Resumo do Pedido</h2>
+                                            <h2 className='text-lg font-bold'>Resumo do Pedido</h2>
                                             <div className='flex justify-between mt-2'>
                                                 <span>Produtos</span>
                                                 <span>{totalItens}</span>
@@ -325,19 +325,25 @@ const Shipping = () => {
                             <div className='w-[67%] md-lg:w-full'>
                                 <div className='flex flex-col gap-3'>
                                     <div className='bg-white p-10 shadow-sm rounded-md'>
-                                        <h2 className='text-[#0D0D0D] font-bold pb-3 font-grotesk'>Informações da Compra</h2>
+                                        <div className="flex justify-between items-center pb-3">
+                                            <h2 className='text-[#0D0D0D] text-lg font-bold font-grotesk'>Informações da Compra</h2>
+                                        </div>
                                         <ul className='font-grotesk'>
                                             {cartItems.map((item, index) => (
-                                                <div className="flex justify-between items-center w-full mb-4">
-                                                    <div className="flex items-center gap-3">
+                                                <div className="flex justify-between items-center w-full ">
+                                                    <div className="flex items-center">
                                                         <img src={`/Images/products/${item.imagemFrente}`} alt={item.nome} className="w-[150px]" />
-                                                        <li className="flex flex-col justify-center gap-3">
-                                                            <strong>{item.nome}</strong>
-                                                            {item.preco} - Tamanho: {item.tamanho}
+                                                        <li className="flex flex-col justify-center gap-2">
+                                                            <strong>{item.nome} | Tamanho: {item.tamanho}</strong>
+                                                            {item.preco}
+                                                            <span onClick={() => removeFromCart(item.id, item.tamanho)} className="text-sm text-red-600 font-semibold cursor-pointer hover:underline mt-4">
+                                                                Remover
+                                                            </span>
                                                         </li>
+
                                                     </div>
 
-                                                    <div className="flex items-center gap-2">
+                                                    <div className="flex items-center gap-2 cursor-pointer">
                                                         <button
                                                             onClick={() => decreaseQuantity(item.id, item.tamanho)}
                                                             className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
@@ -351,9 +357,9 @@ const Shipping = () => {
                                                         >
                                                             +
                                                         </button>
+
                                                     </div>
                                                 </div>
-
                                             ))}
                                         </ul>
                                     </div>

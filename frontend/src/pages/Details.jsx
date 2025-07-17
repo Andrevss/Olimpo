@@ -59,7 +59,7 @@ const Details = () => {
                                 </h3>
                                 <h4 className='mt-5 text-lg font-semibold'>{produto.preco}</h4>
                             </div>
-                            <div className="mb-4">
+                            <div className="mb-2">
                                 <span className="font-semibold text-gray-800">Tamanho:</span>
                                 <div className="flex flex-wrap gap-2 mt-2">
                                     {TamanhosDisponiveis.map((t) => (
@@ -67,19 +67,21 @@ const Details = () => {
                                             key={t}
                                             onClick={() => setTamanhoSelecionado(t)}
                                             className={`
-                                                px-3 py-1 rounded border transition-all text-sm
+                                                w-10 h-8 flex items-center justify-center 
+                                                rounded border transition-all text-sm font-semibold
                                                 ${tamanhoSelecionado === t
-                                                ? 'bg-[#F2A541] text-white border-white'
-                                                : 'bg-white text-black border-gray-300 hover:border-[#F2A541]'}
-                                        `}
+                                                    ? 'bg-[#F2A541] text-white border-white'
+                                                    : 'bg-white text-black border-gray-300 hover:border-[#F2A541]'}
+                                            `}
                                         >
                                             {t}
                                         </button>
                                     ))}
                                 </div>
+
                             </div>
-                            <span className='text-sm italic text-gray-600 font-grotesk'>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent arcu ante.</span>
+                            <span className='text-base   text-gray-600 font-grotesk'>
+                                {produto.descDetalhada}</span>
                             <button
                                 onClick={handleAdicionarAoCarrinho}
                                 className=" bg-[#F2A541] hover:bg-[#F2A541]d18f33 text-white font-bold py-2 px-6 rounded"
