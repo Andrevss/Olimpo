@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartProvider';
 import { useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom';
 
 const Shipping = () => {
 
@@ -45,12 +46,12 @@ const Shipping = () => {
     };
 
     return (
-        <div>
+        <div className='min-h-screen flex flex-col'>
             <Header />
             {isEditing ? (
-                <section className='bg-[#eeeeee]'>
+                <section className='bg-[#eeeeee] flex-grow'>
                     <div className='w-[85%] lg:w-[90%] md:w-[90%] sm:w-[90%] mx-auto py-14'>
-                        <div className='w-full flex flex-wrap'>
+                        <div className='w-full flex '>  
                             <div className='w-[67%] md-lg:w-full'>
                                 <div className='flex flex-col gap-3'>
                                     <div className='bg-white p-10 shadow-sm rounded-md'>
@@ -194,7 +195,7 @@ const Shipping = () => {
                                                 </>
                                             )}
                                             {opcaoEntrega === 'retirada' && (
-                                                <p className="text-sm italic text-gray-600 font-grotesk">*Retirada será feita em ponto físico após confirmação do pedido. Em caso de dúvidas, entre em contato para mais informações sobre o local.</p>
+                                                <p className="text-sm italic text-gray-600 font-grotesk">*Retirada será feita em ponto físico após confirmação do pedido. Em caso de dúvidas, consulte nossa <Link to="/Politicas" className='italic underline'><strong>política de frete</strong></Link>.</p>
                                             )}
 
                                         </form>
@@ -202,9 +203,9 @@ const Shipping = () => {
                                 </div>
                             </div>
                             {cartItems.length > 0 && (
-                                <section className='w-[33%] md-lg:w-full'>{/* resumo do pedido */}
+                                <section className='w-[33%] md-lg:w-full '>{/* resumo do pedido */}
                                     <div className='pl-3 md-lg:pl-0 md-lg:mt-5'>
-                                        <div className='bg-white font-grotesk text-[#0D0D0D] flex flex-col p-3'>
+                                        <div className='bg-white font-grotesk text-[#0D0D0D] flex flex-col p-3 rounded-md '>
                                             <h2 className='text-lg font-bold'>Resumo do Pedido</h2>
                                             <div className='flex justify-between mt-2'>
                                                 <span>Produtos</span>

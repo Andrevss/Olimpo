@@ -7,8 +7,8 @@ const approved = () => {
   return (
     <div>
       <Header />
-      <section className='bg-[#eeeeee]'>
-        <div className='w-[85%] lg:w-[90%] md:w-[90%] sm:w-[90%] mx-auto py-14'>
+      <section className='bg-[#eeeeee] min-h-screen flex flex-col'>
+        <div className='w-[85%] lg:w-[90%] md:w-[90%] sm:w-[90%] mx-auto py-14 flex-grow'>
           <div className='w-full flex flex-wrap justify-center'>
             <div className='w-[67%] md-lg:w-full'>
               <div className='flex flex-col gap-3 bg-white p-10'>

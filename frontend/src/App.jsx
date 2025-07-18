@@ -8,6 +8,7 @@ import Rejected from './pages/Rejected';
 import Approved from './pages/Approved';
 import Details from './pages/Details';
 import AboutUs from './pages/AboutUs';
+import { Policies } from './pages/Policies';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path='/shipping' element={<Shipping />} />
           <Route path='/product/:slug' element={<Details />} />
           <Route path='/AboutUs' element={<AboutUs />} />
+          <Route path='/Politicas' element={<Policies />} />
           <Route path='/pending' element={<Pending />} />
           <Route path='/approved' element={<Approved />} />
           <Route path='/rejected' element={<Rejected />} />

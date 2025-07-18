@@ -6,7 +6,7 @@ const Us = () => {
     return (
         <main className='font-grotesk min-h-screen flex flex-col bg-[#f5f5f5]'>
             <Header />
-            <section className="w-[80%] md:w-[80%] mx-auto mt-10">
+            <section className="w-[80%] md:w-[80%] mx-auto mt-10 flex-grow">
                 <div className="flex flex-col items-center gap-8">
                     <h2 className="text-3xl font-bold mb-4 text-[#F2A541] uppercase">
                         De um grupo, nasce uma ideia.
