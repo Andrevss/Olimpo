@@ -26,11 +26,11 @@ const Header = () => {
                         <ul className='font-grotesk flex justify-start item-center gap-8 font-semibold text-black'>
                             <li className='flex relative justify-center text-[#E0E0E0] items-center gap-2 text-sm after:absolute after:h-[18px] after:w-[1px] after:bg-[#afafaf] after:-right-[16px]'>
                                 <span><MdEmail /></span>
-                                <span>support@gmail.com</span>
+                                <span>contato_Olimpo81@outlook.com</span>
                             </li>
                             <li className='flex relative justify-center text-[#E0E0E0] items-center gap-2 text-sm'>
                                 <span><IoMdPhonePortrait /></span>
-                                <span>(81) 9714-6120</span>
+                                <span>(81) 9.9714-6120</span>
                             </li>
                         </ul>
                         <div>
@@ -38,7 +38,6 @@ const Header = () => {
                                 <div className='flex justify-center items-center gap-4 text-[#E0E0E0]'>
                                     <a href="https://www.instagram.com/olimpo081/?hl=pt-br" target="_blank" rel="noopener noreferrer" className="text-[#E0E0E0] hover:text-[#F2A541]"><FaInstagram /></a>
                                     <a href="###" className="text-[#E0E0E0] hover:text-[#F2A541]"><FaTiktok /></a>
-                                    <a href="###" className="text-[#E0E0E0] hover:text-[#F2A541]"><MdEmail /></a>
                                 </div>
                             </div>
                         </div>
@@ -79,7 +78,7 @@ const Header = () => {
                                         <Link to="/AboutUs" className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === '/AboutUs' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Quem Somos</Link>
                                     </li>
                                     <li>
-                                        <Link className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === 'contact' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Contato</Link>
+                                        <Link to="/Politicas" className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === '/Politicas' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Políticas</Link>
                                     </li>
                                 </ul>
                             </div>
@@ -112,10 +111,10 @@ const Header = () => {
                                 <Link to="/" className={`py-2  border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1  ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Home</Link>
                             </li>
                             <li>
-                                <Link to="/frontend/src/pages/Us.jsx" className={`py-2  border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1  ${pathname === 'aboutUs' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Quem Somos</Link>
+                                <Link to="/AboutUs" className={`py-2  border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1  ${pathname === '/AboutUs' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Quem Somos</Link>
                             </li>
                             <li>
-                                <Link className={`py-2  border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1  ${pathname === 'contact' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Contato</Link>
+                                <Link to="/Politicas" className={`py-2  border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1  ${pathname === '/Politicas' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Políticas</Link>
                             </li>
                         </ul>
                     </div>
