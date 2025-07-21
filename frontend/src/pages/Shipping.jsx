@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import { useCart } from '../context/CartProvider';
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom';
+import { FaTrashAlt } from "react-icons/fa";
 
 const Shipping = () => {
 
@@ -51,7 +52,7 @@ const Shipping = () => {
             {isEditing ? (
                 <section className='bg-[#eeeeee] flex-grow'>
                     <div className='w-[85%] lg:w-[90%] md:w-[90%] sm:w-[90%] mx-auto py-14'>
-                        <div className='w-full flex '>  
+                        <div className='w-full flex md:flex-col md-lg:flex-col'>
                             <div className='w-[67%] md-lg:w-full'>
                                 <div className='flex flex-col gap-3'>
                                     <div className='bg-white p-10 shadow-sm rounded-md'>
@@ -325,50 +326,68 @@ const Shipping = () => {
                         <div className='w-full flex flex-wrap'>
                             <div className='w-[67%] md-lg:w-full'>
                                 <div className='flex flex-col gap-3'>
-                                    <div className='bg-white p-10 shadow-sm rounded-md'>
-                                        <div className="flex justify-between items-center pb-3">
-                                            <h2 className='text-[#0D0D0D] text-lg font-bold font-grotesk'>Informações da Compra</h2>
-                                        </div>
-                                        <ul className='font-grotesk'>
-                                            {cartItems.map((item, index) => (
-                                                <div className="flex justify-between items-center w-full ">
-                                                    <div className="flex items-center">
-                                                        <img src={`/Images/products/${item.imagemFrente}`} alt={item.nome} className="w-[150px]" />
-                                                        <li className="flex flex-col justify-center gap-2">
-                                                            <strong>{item.nome} | Tamanho: {item.tamanho}</strong>
-                                                            {item.preco}
-                                                            <span onClick={() => removeFromCart(item.id, item.tamanho)} className="text-sm text-red-600 font-semibold cursor-pointer hover:underline mt-4">
-                                                                Remover
-                                                            </span>
-                                                        </li>
 
-                                                    </div>
+                                    {cartItems.map((item, index) => (
+                                        <div key={index} className='bg-white p-10 shadow-sm rounded-md'>
+                                            <div className="flex justify-between items-center pb-3">
+                                                <h2 className='text-[#0D0D0D] text-lg font-bold font-grotesk'>Informações da Compra</h2>
 
-                                                    <div className="flex items-center gap-2 cursor-pointer">
-                                                        <button
-                                                            onClick={() => decreaseQuantity(item.id, item.tamanho)}
-                                                            className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
+                                                {/* Ícone visível no desktop */}
+                                                <span
+                                                    onClick={() => removeFromCart(item.id, item.tamanho)}
+                                                    className='hidden md:inline text-red-600 font-semibold cursor-pointer'
+                                                >
+                                                    <FaTrashAlt />
+                                                </span>
+                                            </div>
+
+                                            <div className="flex justify-between items-center w-full md:flex-col">
+                                                <div className="flex items-center md:flex-col">
+                                                    <img
+                                                        src={`/Images/products/${item.imagemFrente}`}
+                                                        alt={item.nome}
+                                                        className="w-[150px]"
+                                                    />
+
+                                                    <li className="flex flex-col justify-center gap-2 font-grotesk">
+                                                        <strong>{item.nome} | Tamanho: {item.tamanho}</strong>
+                                                        {item.preco}
+
+                                                        {/* Link "Remover" visível apenas no mobile */}
+                                                        <span
+                                                            onClick={() => removeFromCart(item.id, item.tamanho)}
+                                                            className="md:hidden text-sm text-red-600 font-semibold cursor-pointer hover:underline mt-4"
                                                         >
-                                                            -
-                                                        </button>
-                                                        <span className="font-semibold w-6 text-center">{item.quantidade}</span>
-                                                        <button
-                                                            onClick={() => increaseQuantity(item.id, item.tamanho)}
-                                                            className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
-                                                        >
-                                                            +
-                                                        </button>
-
-                                                    </div>
+                                                            Remover
+                                                        </span>
+                                                    </li>
                                                 </div>
-                                            ))}
-                                        </ul>
-                                    </div>
+
+                                                <div className="flex items-center gap-2 cursor-pointer md:mt-3 md:justify-between">
+                                                    <button
+                                                        onClick={() => decreaseQuantity(item.id, item.tamanho)}
+                                                        className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
+                                                    >
+                                                        -
+                                                    </button>
+                                                    <span className="font-semibold w-6 text-center">{item.quantidade}</span>
+                                                    <button
+                                                        onClick={() => increaseQuantity(item.id, item.tamanho)}
+                                                        className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
+
             )}
             <Footer />
         </div>

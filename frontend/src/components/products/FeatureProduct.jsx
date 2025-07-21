@@ -73,7 +73,7 @@ const FeatureProduct = () => {
 
                     {/* Nome e preço abaixo da imagem */}
                     <div className='text-center'>
-                        <h2 className='font-grotesk text-[#1C1C1C] font-semibold capitalize'>{produto.nome}</h2>
+                        <h2 className='md:text-3x1 font-grotesk text-[#1C1C1C] font-semibold capitalize'>{produto.nome}</h2>
                         <span className='text-gray-700 font-grotesk'>{produto.preco}</span>
                     </div>
                 </div>
