@@ -13,7 +13,7 @@ export const Policies = () => {
                             Políticas de frete e devolução
                         </h2>
                         <br />
-                        <div className='flex-col sm:flex-col'>
+                        <div className='flex-col sm:flex-col text-justify'>
                             <h4 className='text-lg mb-1'><strong>Envio e Prazo de Postagem</strong></h4>
                             <p className="sm:text-base text-base text-gray leading-relaxed mb-3">
                                 Todos os pedidos são processados e postados em até <strong>3 dias úteis</strong> após a confirmação do pagamento. Assim que seu pedido for enviado, você receberá um e-mail com o código de rastreamento para acompanhar o transporte.

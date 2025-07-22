@@ -12,7 +12,7 @@ const Us = () => {
                         De um grupo, nasce uma ideia.
                     </h2>
                     <div className='flex sm:flex-col'>
-                        <p className="sm:text-base text-xl text-gray leading-relaxed">
+                        <p className="sm:text-base text-xl text-gray leading-relaxed text-justify p-2">
                             Tudo começou na escola, quando fazíamos nossas próprias camisas personalizadas. Era mais do que moda, era um símbolo de quem nós eramos.
                             <br /><br />
                             Jogando basquete, veio o estalo: e se criarmos de verdade uma marca de roupa com a cara do nosso grupo? Algo nosso. Com alma, com voz, com atitude.
@@ -24,8 +24,8 @@ const Us = () => {
                         <img className="md:hidden w-64 h-auto" src='/Images/elements/zeus.png' alt='' />
                     </div>
                     <div className='flex sm:flex-col mb-4'>
-                        <img className="md:w-56 w-96 h-auto mr-8" src='/Images/elements/placa.png' alt='' />
-                        <p className="sm:text-base text-xl text-gray leading-relaxed">
+                        <img className="md:w-56 w-96 h-auto" src='/Images/elements/placa.png' alt='' />
+                        <p className="sm:text-base text-xl text-gray leading-relaxed text-justify p-2">
                             <br /><br />
                             Queríamos trazer referências à nossa essência, ao que vive conosco: os esportes que nos movem e Recife, a cidade que molda nosso olhar.
                             <br /><br />

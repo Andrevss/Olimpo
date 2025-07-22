@@ -196,7 +196,7 @@ const Shipping = () => {
                                                 </>
                                             )}
                                             {opcaoEntrega === 'retirada' && (
-                                                <p className="text-sm italic text-gray-600 font-grotesk">*Retirada será feita em ponto físico após confirmação do pedido. Em caso de dúvidas, consulte nossa <Link to="/Politicas" className='italic underline'><strong>política de frete</strong></Link>.</p>
+                                                <p className="text-sm italic text-justify text-gray-600 font-grotesk">*Retirada será feita em ponto físico após confirmação do pedido. Em caso de dúvidas, consulte nossa <Link to="/Politicas" className='italic underline'><strong>política de frete</strong></Link>.</p>
                                             )}
 
                                         </form>
