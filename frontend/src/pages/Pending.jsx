@@ -1,24 +1,30 @@
 import React from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { BsHourglassSplit } from "react-icons/bs";
+
 
 const Pending = () => {
   return (
-    <div>
+    <div className='min-h-screen flex flex-col font-grotesk'>
       <Header />
-      <section className='bg-[#eeeeee] min-h-screen flex flex-col'>
-        <div className='w-[85%] lg:w-[90%] md:w-[90%] sm:w-[90%] mx-auto py-14 flex-grow'>
-          <div className='w-full flex flex-wrap justify-center'>
-            <div className='w-[67%] md-lg:w-full'>
-              <div className='flex flex-col gap-3'>
-                <div className='bg-white p-10 shadow-sm rounded-md font-grotesk'>
-                  <h1 className='text-2xl font-bold text-[#1C1C1C]'>Pedido Pendente</h1>
-                  <p className='text-lg text-[#666666]'>Seu pedido está sendo processado. Por favor, aguarde a confirmação.</p>
-                </div>
+      <section className= 'mx-auto py-14 flex-grow'>
+        <div className='w-full flex flex-row justify-center'>
+            <div className='md:flex md:flex-col bg-white p-10'>
+              <div className='flex items-center rounded-md mb-3'>
+                <span className='mr-2 text-[24px] text-[#eab308] text-center justify-center'><BsHourglassSplit /></span>
+                <h1 className='text-2xl font-bold text-[#F2A541] uppercase'>Pedido Pendente</h1>
+              </div>
+              <div className='md:flex md:flex-col flex flex-col items-center'>
+                <p className='text-lg text-[#666666] mb-1 text-justify'>
+                  Estamos aguardando a confirmação do seu pagamento. 
+                  <br></br>
+                  Assim que for aprovado, seu pedido será processado!
+                  </p>
+                <button className='px-5 py-[6px] mt-3 rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'>Voltar para tela inicial</button>
               </div>
             </div>
           </div>
-        </div>
       </section>
       <Footer />
     </div>
