@@ -1,17 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartProvider';
-import { useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { FaTrashAlt } from "react-icons/fa";
 
 const Shipping = () => {
 
-    const { register, handleSubmit, formState: { errors }, watch } = useForm();
+    const { register, handleSubmit, formState: { errors }, watch, clearErrors } = useForm({
+        shouldUnregister: true,
+    });
+
     const opcaoEntrega = watch('opcaoEntrega')
+    useEffect(() => {
+        clearErrors();
+    }, [opcaoEntrega, clearErrors]);
 
     console.log({ errors })
+
     const onSubmit = (data) => {
         console.log(data)
     };
@@ -77,7 +84,7 @@ const Shipping = () => {
                                                             </p>
                                                         )}
                                                     </div>
-
+                                                    
                                                     {opcaoEntrega === 'entrega' && (
                                                         <>
                                                             <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
@@ -95,6 +102,33 @@ const Shipping = () => {
                                                                     {errors?.nome?.type === 'minLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Insira um nome válido</p>)}
 
                                                                 </div>
+                                                            </section>
+
+                                                            <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                    <label htmlFor='email'>Email</label>
+                                                                    <input
+                                                                        {...register('email', {
+                                                                            required: true,
+                                                                            pattern: {
+                                                                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Regex básico de e-mail
+                                                                                message: 'Formato de e-mail inválido',
+                                                                            },
+                                                                        })}
+                                                                        type='email'
+                                                                        className={`w-full px-3 py-2 rounded-md ${errors.email ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                        name='email'
+                                                                        id='email'
+                                                                        placeholder='Insira seu melhor email'
+                                                                    />
+                                                                    {errors?.email?.type === 'required' && (
+                                                                        <p className='text-[#ff4848] text-sm font-semibold'>E-mail é obrigatório</p>
+                                                                    )}
+                                                                    {errors?.email?.type === 'pattern' && (
+                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Formato de e-mail inválido</p>
+                                                                    )}
+                                                                </div>
+
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
                                                                     <label htmlFor='phone'>Telefone</label>
                                                                     <input
@@ -108,7 +142,6 @@ const Shipping = () => {
                                                                     {errors?.telefone?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>)}
                                                                     {errors?.telefone?.type === 'minLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Número inválido</p>)}
                                                                     {errors?.telefone?.type === 'maxLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Número inválido</p>)}
-
                                                                 </div>
                                                             </section>
 
@@ -180,7 +213,7 @@ const Shipping = () => {
                                                                 </div>
                                                             </section>
 
-                                                            <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <section className='flex md:flex-col md:gap-2 w-full mt-2 gap-5 text-[#0D0D0D] font-grotesk'>
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
                                                                     <button
                                                                         type="button"
@@ -198,7 +231,82 @@ const Shipping = () => {
                                                         </>
                                                     )}
                                                     {opcaoEntrega === 'retirada' && (
-                                                        <p className="text-sm italic text-justify text-gray-600 font-grotesk">*Retirada será feita em ponto físico após confirmação do pedido. Em caso de dúvidas, consulte nossa <Link to="/Politicas" className='italic underline'><strong>política de frete</strong></Link>.</p>
+                                                        <>
+                                                            <p className="text-sm italic text-justify text-gray-600 font-grotesk mb-2">*Retirada será feita em ponto físico após confirmação do pedido. Em caso de dúvidas, consulte nossa <Link to="/Politicas" className='italic underline'><strong>política de frete</strong></Link>.</p>
+                                                            <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                    <label htmlFor='name'>Nome Completo</label>
+                                                                    <input
+                                                                        {...register('nome', { required: true, minLength: 1 })}
+                                                                        type='text'
+                                                                        className={`w-full px-3 py-2 rounded-md ${errors.nome ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                        name='nome'
+                                                                        id='nome'
+                                                                        placeholder='Insira seu nome completo'
+                                                                    />
+                                                                    {errors?.nome?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>Nome é obrigatório</p>)}
+                                                                    {errors?.nome?.type === 'minLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Insira um nome válido</p>)}
+
+                                                                </div>
+                                                            </section>
+
+                                                            <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                    <label htmlFor='email'>Email</label>
+                                                                    <input
+                                                                        {...register('email', {
+                                                                            required: true,
+                                                                            pattern: {
+                                                                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Regex básico de e-mail
+                                                                                message: 'Formato de e-mail inválido',
+                                                                            },
+                                                                        })}
+                                                                        type='email'
+                                                                        className={`w-full px-3 py-2 rounded-md ${errors.email ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                        name='email'
+                                                                        id='email'
+                                                                        placeholder='Insira seu melhor email'
+                                                                    />
+                                                                    {errors?.email?.type === 'required' && (
+                                                                        <p className='text-[#ff4848] text-sm font-semibold'>E-mail é obrigatório</p>
+                                                                    )}
+                                                                    {errors?.email?.type === 'pattern' && (
+                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Formato de e-mail inválido</p>
+                                                                    )}
+                                                                </div>
+
+                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                    <label htmlFor='phone'>Telefone</label>
+                                                                    <input
+                                                                        {...register('telefone', { required: true, minLength: 11, maxLength: 11 })}
+                                                                        type='number'
+                                                                        className={`appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                        name='telefone'
+                                                                        id='telefone'
+                                                                        placeholder='(11) 1.1111-0000'
+                                                                    />
+                                                                    {errors?.telefone?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>)}
+                                                                    {errors?.telefone?.type === 'minLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Número inválido</p>)}
+                                                                    {errors?.telefone?.type === 'maxLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Número inválido</p>)}
+                                                                </div>
+                                                            </section>
+
+                                                            <section className='flex md:flex-col md:gap-2 mt-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={handleSubmit((data) => {
+                                                                            onSubmit(data);
+                                                                            setFormData(data);
+                                                                            setIsEditing(false);
+                                                                        })}
+                                                                        className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
+                                                                    >
+                                                                        {isEditing ? 'Salvar' : 'Editar'}
+                                                                    </button>
+                                                                </div>
+                                                            </section>
+                                                        </>
                                                     )}
 
                                                 </form>
@@ -238,59 +346,105 @@ const Shipping = () => {
                                 <div className='w-full flex flex-wrap'>
                                     <div className='w-[67%] md-lg:w-full'>
                                         <div className='flex flex-col gap-3'>
-                                            <div className='bg-white p-10 shadow-sm rounded-md'>
-                                                <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <label className="font-bold">Nome</label>
-                                                        <p className="">{formData.nome}</p>
-                                                    </div>
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <label className="font-bold">Telefone</label>
-                                                        <p className="">{formData.telefone}</p>
-                                                    </div>
-                                                </section>
+                                            {opcaoEntrega === 'entrega' && (
+                                                <>
+                                                    <div className='bg-white p-10 shadow-sm rounded-md'>
+                                                        <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Nome</label>
+                                                                <p className="">{formData.nome}</p>
+                                                            </div>
+                                                        </section>
 
-                                                <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <label className="font-bold">Rua</label>
-                                                        <p className="">{formData.rua}</p>
-                                                    </div>
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <label className="font-bold">Bairro</label>
-                                                        <p className="">{formData.bairro}</p>
-                                                    </div>
+                                                        <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Email</label>
+                                                                <p className="">{formData.email}</p>
+                                                            </div>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Telefone</label>
+                                                                <p className="">{formData.telefone}</p>
+                                                            </div>
+                                                        </section>
 
-                                                </section>
-                                                <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <label className="font-bold">Cidade</label>
-                                                        <p className="">{formData.cidade}</p>
+                                                        <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Rua</label>
+                                                                <p className="">{formData.rua}</p>
+                                                            </div>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Bairro</label>
+                                                                <p className="">{formData.bairro}</p>
+                                                            </div>
+
+                                                        </section>
+                                                        <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Cidade</label>
+                                                                <p className="">{formData.cidade}</p>
+                                                            </div>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Número</label>
+                                                                <p>{formData.numero}</p>
+                                                            </div>
+                                                        </section>
+                                                        {formData.complemento && (
+                                                            <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                    <label className="font-bold">Complemento</label>
+                                                                    <p className="">{formData.complemento}</p>
+                                                                </div>
+                                                            </section>
+                                                        )}
+                                                        <section className='flex md:flex-col md:gap-2 w-full mb-4 gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setIsEditing(!isEditing)}
+                                                                    className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
+                                                                >
+                                                                    {isEditing ? 'Salvar' : 'Editar'}
+                                                                </button>
+                                                            </div>
+                                                        </section>
                                                     </div>
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <label className="font-bold">Número</label>
-                                                        <p>{formData.numero}</p>
+                                                </>
+                                            )}
+                                            {opcaoEntrega === 'retirada' && (
+                                                <>
+                                                    <div className='bg-white p-10 shadow-sm rounded-md'>
+                                                        <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Nome</label>
+                                                                <p className="">{formData.nome}</p>
+                                                            </div>
+                                                        </section>
+
+                                                        <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Email</label>
+                                                                <p className="">{formData.email}</p>
+                                                            </div>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Telefone</label>
+                                                                <p className="">{formData.telefone}</p>
+                                                            </div>
+                                                        </section>
+
+                                                        <section className='flex md:flex-col md:gap-2 w-full mb-4 gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 w-full'>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setIsEditing(!isEditing)}
+                                                                    className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
+                                                                >
+                                                                    {isEditing ? 'Salvar' : 'Editar'}
+                                                                </button>
+                                                            </div>
+                                                        </section>
                                                     </div>
-                                                </section>
-                                                {formData.complemento && (
-                                                    <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                        <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                            <label className="font-bold">Complemento</label>
-                                                            <p className="">{formData.complemento}</p>
-                                                        </div>
-                                                    </section>
-                                                )}
-                                                <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setIsEditing(!isEditing)}
-                                                            className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
-                                                        >
-                                                            {isEditing ? 'Salvar' : 'Editar'}
-                                                        </button>
-                                                    </div>
-                                                </section>
-                                            </div>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                     <section className='w-[33%] md-lg:w-full'>{/* resumo do pedido */}
@@ -389,20 +543,20 @@ const Shipping = () => {
             ) : (
                 <div className="min-h-screen flex flex-col bg-[#eeeeee] font-grotesk">
                     <main className="flex flex-grow w-[65%] lg:w-[90%] mx-auto py-14 ">
-                            <div className='p-10 rounded-md w-full'>
-                                <h2 className='text-center text-xl mb-2'>
-                                    Seu carrinho está vazio
-                                </h2>
-                                <p className="font-grotesk italic text-gray-600 text-center mb-4">
-                                     Que tal explorar nossos produtos?
-                                </p>
-                                <div className='flex justify-center'>
+                        <div className='p-10 rounded-md w-full'>
+                            <h2 className='text-center text-xl mb-2'>
+                                Seu carrinho está vazio
+                            </h2>
+                            <p className="font-grotesk italic text-gray-600 text-center mb-4">
+                                Que tal explorar nossos produtos?
+                            </p>
+                            <div className='flex justify-center'>
                                 <Link to="/" className="cursor-pointer px-7 py-[8px] mt-3 rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]">
                                     Ver produtos
                                 </Link>
-                                </div>
                             </div>
-                        
+                        </div>
+
                     </main>
                 </div>
             )}
