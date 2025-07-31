@@ -12,5 +12,5 @@
 # Ignore binários e builds
 bin/
 obj/
-
+node_modules/
 .vercel
