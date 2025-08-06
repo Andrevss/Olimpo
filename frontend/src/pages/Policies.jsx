@@ -6,7 +6,7 @@ export const Policies = () => {
     return (
         <div className="min-h-screen flex flex-col bg-[#eeeeee] font-grotesk">
             <Header />
-            <main className="flex-grow <div w-[65%] lg:w-[90%] md:w-[90%] sm:w-[90%] mx-auto py-14">
+            <main className="flex-grow w-[65%] lg:w-[90%] md:w-[90%] sm:w-[90%] mx-auto py-14">
                 <section className='flex flex-col gap-3'>
                     <div className='bg-white p-10 shadow-sm rounded-md w-full'>
                         <h2 className="text-2xl font-bold text-[#F2A541] uppercase">

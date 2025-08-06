@@ -13,8 +13,8 @@ const Footer = () => {
 
     return (
         <footer className='bg-[#1C1C1C]'>
-            <div className='w-[85%] flex flex-wrap justify-between mx-auto pb-12 pt-10 md-lg:pb-10 sm:pb-6 md:flex-col'>
-                    <div className='text-[#E0E0E0] font-grotesk flex-col justify-center sm:justify-start sm:mt-6 w-full'>
+            <div className='w-[85%] flex justify-between mx-auto pb-12 pt-10 md-lg:pb-10 sm:pb-6 md:flex-col'>
+                    <div className='text-[#E0E0E0] font-grotesk flex-col sm:justify-start sm:mt-6'>
                         <h2 className='text-lg'>Formas de Pagamento</h2>
                         <div className='flex gap-4 text-[#E0E0E0] mt-2 text-2xl'>
                             <span href="###" ><FaCcMastercard /></span>
@@ -24,7 +24,7 @@ const Footer = () => {
                         <h6 className='mt-3 text-xs	'>*Consulte nossos termos para informações sobre frete</h6>
                     </div>
                 <section className=''>
-                    <div className='text-[#E0E0E0] font-grotesk flex-col justify-center sm:justify-start sm:mt-6 w-full'>
+                    <div className='text-[#E0E0E0] font-grotesk flex-col justify-center sm:justify-start sm:mt-6 '>
                         <h2 className='text-lg'>Nos siga nas redes sociais</h2>
                         <div className='flex gap-4 text-[#E0E0E0] mt-2 text-xl'>
                             <a href="https://www.instagram.com/olimpo081/?hl=pt-br" target="_blank" rel="noopener noreferrer" className="text-[#E0E0E0] hover:text-[#F2A541]"><FaInstagram /></a>
@@ -34,7 +34,7 @@ const Footer = () => {
                     </div>
                 </section>
                 <section className=''>
-                    <div className='text-[#E0E0E0] font-grotesk flex-col justify-center sm:justify-start sm:mt-6 w-full'>
+                    <div className='text-[#E0E0E0] font-grotesk flex-col justify-center sm:justify-start sm:mt-6'>
                         <h2 className='text-lg'>Fale Conosco</h2>
                         <div className='flex gap-4 text-[#E0E0E0] mt-2 text-xl'>
                             <a href="###" className="text-[#E0E0E0] hover:text-[#F2A541]"><FaWhatsapp /></a>

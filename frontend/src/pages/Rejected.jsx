@@ -1,25 +1,28 @@
 import React from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import { FaXmark } from "react-icons/fa6";
 
 const Rejected = () => {
   return (
-    <div>
+    <div className='min-h-screen flex flex-col font-grotesk'>
       <Header />
-      <section className='bg-[#eeeeee] min-h-screen flex flex-col'>
-        <div className='w-[85%] lg:w-[90%] md:w-[90%] sm:w-[90%] mx-auto py-14 flex-grow'>
-          <div className='w-full flex flex-wrap justify-center'>
-            <div className='w-[67%] md-lg:w-full'>
-              <div className='flex flex-col gap-3'>
-                <div className='bg-white p-10 shadow-sm rounded-md font-grotesk'>
-                  <h1 className='text-2xl font-bold text-[#1C1C1C]'>Pedido Pendente</h1>
-                <div className='flex flex-col justify-center items-center gap-2'>
-                  <p className='text-lg text-[#666666]'>Seu pedido está sendo processado. Por favor, aguarde a confirmação.</p>
-                </div>
-                </div>
+      <section className= 'mx-auto py-14 flex-grow'>
+        <div className='w-full flex flex-row justify-center'>
+            <div className='md:flex md:flex-col bg-white p-10'>
+              <div className='flex items-center rounded-md mb-3'>
+                <span className='mr-2 text-[26px] text-[#B91C1C] text-center justify-center'><FaXmark /></span>
+                <h1 className='text-2xl font-bold text-[#F2A541] uppercase'>Pedido Rejeitado</h1>
+              </div>
+              <div className='md:flex md:flex-col flex flex-col items-center'>
+                <p className='text-lg text-[#666666] mb-1 text-justify'>
+                  O pagamento foi recusado. 
+                  <br></br>
+                  Verifique os dados do cartão ou tente outro método de pagamento.
+                  </p>
+                <button className='px-5 py-[6px] mt-3 rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'>Voltar para tela inicial</button>
               </div>
             </div>
-          </div>
         </div>
       </section>
       <Footer />

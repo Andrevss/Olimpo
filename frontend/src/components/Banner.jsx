@@ -39,7 +39,7 @@ const Banner = () => {
                             >
                             {
                                 [1, 2, 3].map((img, i) => <Link key ={i} to='#'>
-                                    <img src={`/Images/banner/${img}.png`} alt="" />
+                                    <img src={`${process.env.REACT_APP_BACKEND_URL}/Images/banner/${img}.png`} alt="" />
                                 </Link> )
                             }
                             </Carousel>
