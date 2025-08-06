@@ -34,7 +34,7 @@ const Details = () => {
                                         key={i}
                                         className={`w-[90px] h-[110px] object-cover cursor-pointer border ${imagemAtual === img ? 'border-[#F2A541]' : 'border-gray-200'
                                             } hover:border-[#F2A541] transition-all `}
-                                        src={`/Images/products/${img}`}
+                                        src={`${process.env.REACT_APP_BACKEND_URL}/Images/products/${img}`}
                                         alt={`Thumb ${i + 1}`}
                                         onClick={() => setImagemAtual(img)}
                                     />
@@ -43,7 +43,7 @@ const Details = () => {
                             <div className='flex mt-[1.25rem]'>
                                 <img
                                     className='h-[550px] w-full object-contain transition-all duration-300 md:justify-start'
-                                    src={`/Images/products/${imagemAtual}`}
+                                    src={`${process.env.REACT_APP_BACKEND_URL}/Images/products/${imagemAtual}`}
                                     alt={produto.nome}
                                 />
                             </div>
