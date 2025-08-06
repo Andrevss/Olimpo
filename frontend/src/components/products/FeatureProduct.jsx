@@ -24,14 +24,14 @@ const FeatureProduct = () => {
                             <img
                                 onClick={() => navigate(`/product/${produto.slug}`)}
                                 className='w-full h-full cursor-pointer object-contain absolute transition-opacity duration-500 opacity-100 group-hover:opacity-0'
-                                src={`/Images/products/${produto.imagemFrente}`}
+                                src={`${process.env.REACT_APP_BACKEND_URL}/Images/products/${produto.imagemFrente}`}
                                 alt={produto.nome}
                             />
 
                             {/* Imagem das costas */}
                             <img
                                 className='w-full h-full cursor-pointer object-contain transition-opacity duration-500 opacity-0 group-hover:opacity-100'
-                                src={`/Images/products/${produto.imagemCostas}`}
+                                src={`${process.env.REACT_APP_BACKEND_URL}/Images/products/${produto.imagemCostas}`}
                                 alt=''
                             />
                         {/* Botão do carrinho */}

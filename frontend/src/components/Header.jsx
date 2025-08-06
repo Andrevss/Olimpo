@@ -50,10 +50,10 @@ const Header = () => {
                         <div className='md-lg:w-full md-lg:pt-4'>
                             <div className='flex justify-between items-center'>
                                 <div className='justify-center items-center w-[30px] h-rounded-sm cursor-pointer lg:hidden md-lg:flex xl:hidden hidden' onClick={() => setShowSidebar(false)}>
-                                    <span className='text-[24px]'> <PiList /></span>
+                                    <span className='text-[24px]'><PiList /></span>
                                 </div>
                                 <Link to='/'>
-                                    <img className="w-40 h-auto" src="/Images/logo1.png" alt="" />
+                                    <img className="w-40 h-auto" src={`${process.env.REACT_APP_BACKEND_URL}/Images/logo1.png`} alt="" />
                                 </Link>
                                 <div className='relative lg:hidden md-lg:flex xl:hidden hidden cursor-pointer' onClick={redirect}>
                                     <span className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-lg font-bold uppercase ${pathname === '/shipping' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>

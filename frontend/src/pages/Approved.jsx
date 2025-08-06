@@ -1,9 +1,18 @@
-import React from 'react'
+import { useEffect } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { FcCheckmark } from "react-icons/fc";
+import { useCart } from '../context/CartProvider';
 
-const approved = () => {
+const Approved = () => {
+
+  const { setCartItem } = useCart();
+
+  useEffect(() => {
+    localStorage.removeItem('cart'); // limpa o localStorage
+    setCartItem([]); // limpa o estado global do carrinho
+  }, []);
+
   return (
     <div className='min-h-screen flex flex-col font-grotesk'>
       <Header />
@@ -30,4 +39,4 @@ const approved = () => {
   )
 }
 
-export default approved
+export default Approved

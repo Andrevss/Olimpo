@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartProvider';
@@ -19,9 +19,34 @@ const Shipping = () => {
 
     console.log({ errors })
 
-    const onSubmit = (data) => {
-        console.log(data)
+    const onSubmit = async (data) => {
+        const items = cartItems.map(item => ({
+            id: item.id,
+            title: `${item.nome} - ${item.tamanho}`,
+            quantity: item.quantidade,
+            unitPrice: parseFloat(item.preco.replace('R$', '').replace(',', '.')),
+            imagemFrente: item.imagemFrente // se quiser enviar imagem
+        }));
+
+        const response = await fetch("http://localhost:5000/api/payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                items,
+                clienteNome: data.nome,
+                clienteEmail: data.email
+            }),
+        });
+
+        const resData = await response.json();
+
+        if (resData?.init_point) {
+            window.location.href = resData.init_point;
+        } else {
+            console.error("Erro ao gerar link:", resData);
+        }
     };
+
     const [isEditing, setIsEditing] = useState(true)
     const [formData, setFormData] = useState({});
     const { cartItems, decreaseQuantity, increaseQuantity, removeFromCart } = useCart();
@@ -31,27 +56,6 @@ const Shipping = () => {
         const preco = parseFloat(item.preco.replace("R$", "").replace(",", "."));
         return acc + preco * item.quantidade;
     }, 0);
-
-    const handleFinalizarPedido = async () => {
-        const items = cartItems.map(item => ({
-            id: item.id,
-            title: `${item.nome} - ${item.tamanho}`,
-            quantity: item.quantidade,
-            unitPrice: parseFloat(item.preco.replace('R$', '').replace(',', '.')),
-        }));
-
-        const response = await fetch("http://localhost:5000/api/payment"/*https://olimpo-85kr.onrender.com/api/payment*/, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(items),
-        });
-        const data = await response.json();
-        if (data?.init_point) {
-            window.location.href = data.init_point;
-        } else {
-            console.error("Erro ao gerar link:", data);
-        }
-    };
 
     return (
         <div className='min-h-screen flex flex-col'>
@@ -84,7 +88,7 @@ const Shipping = () => {
                                                             </p>
                                                         )}
                                                     </div>
-                                                    
+
                                                     {opcaoEntrega === 'entrega' && (
                                                         <>
                                                             <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
@@ -329,7 +333,7 @@ const Shipping = () => {
                                                 <button
                                                     onClick={handleSubmit((data) => {
                                                         onSubmit(data);
-                                                        handleFinalizarPedido();
+                                                        
                                                     })}
                                                     className='px-5 py-[6px] mt-3 rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
                                                 >Finalizar Pedido</button>
@@ -463,7 +467,6 @@ const Shipping = () => {
                                                     type='submit'
                                                     onClick={handleSubmit((data) => {
                                                         onSubmit(data);
-                                                        handleFinalizarPedido();
                                                     })}
                                                     className='px-5 py-[6px] mt-3 rounded-sm font-extrabold hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
                                                 >Finalizar Pedido</button>
@@ -496,7 +499,7 @@ const Shipping = () => {
                                                 <div className="flex justify-between items-center w-full md:flex-col">
                                                     <div className="flex items-center md:flex-col">
                                                         <img
-                                                            src={`/Images/products/${item.imagemFrente}`}
+                                                            src={`${process.env.REACT_APP_BACKEND_URL}/Images/products/${item.imagemFrente}`}
                                                             alt={item.nome}
                                                             className="w-[150px]"
                                                         />
