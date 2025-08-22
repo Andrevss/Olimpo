@@ -3,6 +3,11 @@ import Carousel from 'react-multi-carousel';
 import { Link } from 'react-router-dom';
 import 'react-multi-carousel/lib/styles.css'
 
+// Importar as imagens do banner
+import banner1 from '../assets/Images/banner/1.png';
+import banner2 from '../assets/Images/banner/2.png';
+import banner3 from '../assets/Images/banner/3.png';
+
 const Banner = () => {
 
     const responsive = {
@@ -22,8 +27,10 @@ const Banner = () => {
             breakpoint: {max: 464, min: 0},
             items: 1
         },
-
     }
+
+    // Array com as imagens importadas
+    const bannerImages = [banner1, banner2, banner3];
 
     return (
         <div className='w-full h-full md-lg:mt-6'>
@@ -38,9 +45,11 @@ const Banner = () => {
                                 responsive={responsive}
                             >
                             {
-                                [1, 2, 3].map((img, i) => <Link key ={i} to='#'>
-                                    <img src={`${process.env.REACT_APP_BACKEND_URL}/Images/banner/${img}.png`} alt="" />
-                                </Link> )
+                                bannerImages.map((img, i) => 
+                                    <Link key={i} to='#'>
+                                        <img src={img} alt={`Banner ${i + 1}`} />
+                                    </Link>
+                                )
                             }
                             </Carousel>
                         </div>

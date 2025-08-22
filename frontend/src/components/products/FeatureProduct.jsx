@@ -4,10 +4,19 @@ import { useCart } from '../../context/CartProvider';
 import { useNavigate } from 'react-router-dom';
 import produtos from '../../data/products';
 
+const TamanhosDisponiveis = ['PP', 'P', 'M', 'G', 'GG'];
+
 const FeatureProduct = () => {
     const [sizeOption, setSizeOption] = useState({});
     const { addToCart } = useCart();
     const navigate = useNavigate();
+
+    // Função para verificar se o tamanho está disponível
+    const isTamanhoDisponivel = (produto, tamanho) => {
+        // Se o produto não tem a propriedade tamanhosDisponiveis, considera todos disponíveis
+        if (!produto.tamanhosDisponiveis) return true;
+        return produto.tamanhosDisponiveis.includes(tamanho);
+    };
 
     return (
         <main className='w-[90%] flex flex-wrap justify-center gap-8 mx-auto'>
@@ -21,19 +30,20 @@ const FeatureProduct = () => {
                 <div key={i} className="flex flex-col items-center w-[350px]">
                     <div className='relative group w-full h-auto overflow-hidden'>
                         {/* Imagem da frente */}
-                            <img
-                                onClick={() => navigate(`/product/${produto.slug}`)}
-                                className='w-full h-full cursor-pointer object-contain absolute transition-opacity duration-500 opacity-100 group-hover:opacity-0'
-                                src={`${process.env.REACT_APP_BACKEND_URL}/Images/products/${produto.imagemFrente}`}
-                                alt={produto.nome}
-                            />
+                        <img
+                            onClick={() => navigate(`/product/${produto.slug}`)}
+                            className='w-full h-full cursor-pointer object-contain absolute transition-opacity duration-500 opacity-100 group-hover:opacity-0'
+                            src={produto.imagemFrente}
+                            alt={produto.nome}
+                        />
 
-                            {/* Imagem das costas */}
-                            <img
-                                className='w-full h-full cursor-pointer object-contain transition-opacity duration-500 opacity-0 group-hover:opacity-100'
-                                src={`${process.env.REACT_APP_BACKEND_URL}/Images/products/${produto.imagemCostas}`}
-                                alt=''
-                            />
+                        {/* Imagem das costas */}
+                        <img
+                            className='w-full h-full cursor-pointer object-contain transition-opacity duration-500 opacity-0 group-hover:opacity-100'
+                            src={produto.imagemCostas}
+                            alt=''
+                        />
+                        
                         {/* Botão do carrinho */}
                         <ul className='flex justify-center items-center gap-2 absolute bottom-[-40px] left-1/2 transform -translate-x-1/2 opacity-0 transition-all duration-700 group-hover:bottom-3 group-hover:opacity-100'>
                             <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#F2A541] hover:text-white hover:rotate-[720deg] transition-all'
@@ -52,7 +62,7 @@ const FeatureProduct = () => {
                                 <select
                                     id='sizeOption'
                                     name='sizeOption'
-                                    className='w-[38px] h-[30px] justify-center items-center rounded-lg '
+                                    className='w-[38px] h-[30px] justify-center items-center rounded-lg text-sm font-grotesk'
                                     value={sizeOption[produto.id] || ''}
                                     onChange={(e) => setSizeOption(prev => ({
                                         ...prev,
@@ -60,15 +70,22 @@ const FeatureProduct = () => {
                                     }))}
                                 >
                                     <option value=''></option>
-                                    <option value='PP'>PP</option>
-                                    <option value='P'>P</option>
-                                    <option value='M'>M</option>
-                                    <option value='G'>G</option>
-                                    <option value='GG'>GG</option>
+                                    {TamanhosDisponiveis.map((tamanho) => {
+                                        const disponivel = isTamanhoDisponivel(produto, tamanho);
+                                        return (
+                                            <option 
+                                                key={tamanho}
+                                                value={tamanho}
+                                                disabled={!disponivel}
+                                                className={!disponivel ? 'text-gray-400 bg-gray-100' : ''}
+                                            >
+                                                {tamanho}
+                                            </option>
+                                        );
+                                    })}
                                 </select>
                             </li>
                         </ul>
-
                     </div>
 
                     {/* Nome e preço abaixo da imagem */}
@@ -79,7 +96,6 @@ const FeatureProduct = () => {
                 </div>
             ))}
         </main>
-
     );
 };
 

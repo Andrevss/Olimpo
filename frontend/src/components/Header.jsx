@@ -6,7 +6,7 @@ import { FaTiktok } from "react-icons/fa6";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { PiList } from "react-icons/pi";
 import { useCart } from '../context/CartProvider';
-
+import logo1 from '../assets/Images/logos/1.png'
 
 const Header = () => {
 
@@ -53,7 +53,7 @@ const Header = () => {
                                     <span className='text-[24px]'><PiList /></span>
                                 </div>
                                 <Link to='/'>
-                                    <img className="w-40 h-auto" src={`${process.env.REACT_APP_BACKEND_URL}/Images/logo1.png`} alt="" />
+                                    <img className="w-40 h-auto" src={logo1} alt="" />
                                 </Link>
                                 <div className='relative lg:hidden md-lg:flex xl:hidden hidden cursor-pointer' onClick={redirect}>
                                     <span className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-lg font-bold uppercase ${pathname === '/shipping' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>

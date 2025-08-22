@@ -1,6 +1,7 @@
 import React from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import placa from '../assets/Images/elements/placa.png'
 
 const Us = () => {
     return (
@@ -19,9 +20,9 @@ const Us = () => {
                             <br /><br />
                             Hoje, cada peça da <strong>OLIMPO</strong> carrega história, conexão e autenticidade.
                         </p>
-                        <img className="md:hidden w-96 h-auto" src={`${process.env.REACT_APP_BACKEND_URL}/Images/elements/placa.png`} alt='' />
+                        <img className="md:hidden w-96 h-auto" src={placa} alt='ícone tubarão-ratão' />
                         <div className='hidden md:flex md:justify-center'>
-                            <img className="w-56 h-auto" src={`${process.env.REACT_APP_BACKEND_URL}/Images/elements/placa.png`} alt='' />
+                            <img className="w-56 h-auto" src={placa} alt='ícone tubarão-ratão' />
                         </div>
                     </div>
 

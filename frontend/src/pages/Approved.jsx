@@ -9,9 +9,9 @@ const Approved = () => {
   const { setCartItem } = useCart();
 
   useEffect(() => {
-    localStorage.removeItem('cart'); // limpa o localStorage
-    setCartItem([]); // limpa o estado global do carrinho
-  }, []);
+    localStorage.removeItem('cart'); 
+    setCartItem([]);
+  });
 
   return (
     <div className='min-h-screen flex flex-col font-grotesk'>
