@@ -6,7 +6,7 @@ import Footer from '../components/Footer';
 
 const Home = () => {
     return (
-        <div className='w-full'>
+        <div className='min-h-screen w-full flex flex-col'>
             <Header/>
             <Banner />
             <section className='py-[45px]'>

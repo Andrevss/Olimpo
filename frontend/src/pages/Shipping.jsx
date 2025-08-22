@@ -1,20 +1,78 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartProvider';
-import { useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { FaTrashAlt } from "react-icons/fa";
+import imgFrente from '../assets/Images/products/1.png'
 
 const Shipping = () => {
 
-    const { register, handleSubmit, formState: { errors }, watch } = useForm();
+    const { register, handleSubmit, formState: { errors }, watch, clearErrors } = useForm({
+        shouldUnregister: true,
+    });
+
     const opcaoEntrega = watch('opcaoEntrega')
+    useEffect(() => {
+        clearErrors();
+    }, [opcaoEntrega, clearErrors]);
 
     console.log({ errors })
-    const onSubmit = (data) => {
-        console.log(data)
+
+    const gerarMensagemWhatsApp = (data) => {
+        let mensagem = `🛍️ *NOVO PEDIDO*\n\n`;
+        mensagem += `👤 *Dados do Cliente:*\n`;
+        mensagem += `• Nome: ${data.nome}\n`;
+        mensagem += `• Email: ${data.email}\n`;
+        mensagem += `• Telefone: ${data.telefone || 'Não informado'}\n\n`;
+
+        // Opção de entrega
+        mensagem += `📦 *Entrega:* ${data.opcaoEntrega === 'entrega' ? 'Delivery' : 'Retirada no local'}\n\n`;
+
+        // Se for entrega, adicionar endereço
+        if (data.opcaoEntrega === 'entrega') {
+            mensagem += `🏠 *Endereço de Entrega:*\n`;
+            mensagem += `• Rua: ${data.rua}, ${data.numero}\n`;
+            mensagem += `• Bairro: ${data.bairro}\n`;
+            mensagem += `• Cidade: ${data.cidade}\n`;
+            if (data.complemento) {
+                mensagem += `• Complemento: ${data.complemento}\n`;
+            }
+            mensagem += `\n`;
+        }
+
+        // Produtos do carrinho
+        mensagem += `🛒 *Produtos:*\n`;
+        cartItems.forEach((item, index) => {
+            mensagem += `${index + 1}. ${item.nome}\n`;
+            mensagem += `   • Tamanho: ${item.tamanho}\n`;
+            mensagem += `   • Quantidade: ${item.quantidade}\n`;
+            mensagem += `   • Preço: ${item.preco}\n\n`;
+        });
+
+        // Total
+        const totalGeral = cartItems.reduce((acc, item) => {
+            const preco = parseFloat(item.preco.replace("R$", "").replace(",", "."));
+            return acc + preco * item.quantidade;
+        }, 0);
+
+        mensagem += `💰 *Total do Pedido: R$ ${totalGeral.toFixed(2).replace(".", ",")}*`;
+
+        return mensagem;
     };
+
+    const onSubmit = async (data) => {
+        const mensagem = gerarMensagemWhatsApp(data);
+
+        const numeroWhatsApp = "558197146120"; 
+
+        const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+
+        window.open(urlWhatsApp, '_blank');
+    };
+
+
     const [isEditing, setIsEditing] = useState(true)
     const [formData, setFormData] = useState({});
     const { cartItems, decreaseQuantity, increaseQuantity, removeFromCart } = useCart();
@@ -24,41 +82,6 @@ const Shipping = () => {
         const preco = parseFloat(item.preco.replace("R$", "").replace(",", "."));
         return acc + preco * item.quantidade;
     }, 0);
-
-    const handleFinalizarPedido = async () => {
-        const items = cartItems.map(item => ({
-            id: item.id,
-            title: `${item.nome} - ${item.tamanho}`,
-            quantity: item.quantidade,
-            unitPrice: parseFloat(item.preco.replace('R$', '').replace(',', '.')),
-        }));
-
-        const clienteNome = watch('nome');
-
-        const payload = {
-            items,
-            clienteNome,
-        };
-
-        try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/payment`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
-
-            const data = await response.json();
-
-            if (data?.init_point) {
-                window.location.href = data.init_point;
-            } else {
-                console.error("Erro ao gerar link:", data);
-            }
-        } catch (err) {
-            console.error("Erro na requisição:", err);
-        }
-    };
-
 
     return (
         <div className='min-h-screen flex flex-col'>
@@ -219,22 +242,31 @@ const Shipping = () => {
                                                                     />
                                                                 </div>
                                                             </section>
-
-                                                            <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            {/*
+                                                            <section className='flex md:flex-col md:gap-2 w-full mt-2 gap-5 text-[#0D0D0D] font-grotesk'>
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
                                                                     <button
                                                                         type="button"
                                                                         onClick={handleSubmit((data) => {
-                                                                            onSubmit(data);
                                                                             setFormData(data);
-                                                                            setIsEditing(false);
+
+                                                                            if (isEditing) {
+                                                                                // salvando os dados editados
+                                                                                console.log("Dados do cliente salvos:", data);
+                                                                                setIsEditing(false);
+                                                                            } else {
+                                                                                // entrando em modo de edição
+                                                                                setIsEditing(true);
+                                                                            }
                                                                         })}
                                                                         className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
                                                                     >
                                                                         {isEditing ? 'Salvar' : 'Editar'}
                                                                     </button>
+
                                                                 </div>
                                                             </section>
+                                                            */}
                                                         </>
                                                     )}
                                                     {opcaoEntrega === 'retirada' && (
@@ -297,7 +329,7 @@ const Shipping = () => {
                                                                     {errors?.telefone?.type === 'maxLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Número inválido</p>)}
                                                                 </div>
                                                             </section>
-
+                                                            {/*
                                                             <section className='flex md:flex-col md:gap-2 mt-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
                                                                     <button
@@ -313,9 +345,9 @@ const Shipping = () => {
                                                                     </button>
                                                                 </div>
                                                             </section>
+                                                            */}
                                                         </>
                                                     )}
-
                                                 </form>
                                             </div>
                                         </div>
@@ -336,7 +368,7 @@ const Shipping = () => {
                                                 <button
                                                     onClick={handleSubmit((data) => {
                                                         onSubmit(data);
-                                                        handleFinalizarPedido();
+
                                                     })}
                                                     className='px-5 py-[6px] mt-3 rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
                                                 >Finalizar Pedido</button>
@@ -353,81 +385,105 @@ const Shipping = () => {
                                 <div className='w-full flex flex-wrap'>
                                     <div className='w-[67%] md-lg:w-full'>
                                         <div className='flex flex-col gap-3'>
-                                            <div className='bg-white p-10 shadow-sm rounded-md'>
-                                                
-                                                <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                    {formData.nome && (
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <label className="font-bold">Nome</label>
-                                                        <p className="">{formData.nome}</p>
-                                                    </div>
-                                                    )}
-                                                </section>
+                                            {opcaoEntrega === 'entrega' && (
+                                                <>
+                                                    <div className='bg-white p-10 shadow-sm rounded-md'>
+                                                        <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Nome</label>
+                                                                <p className="">{formData.nome}</p>
+                                                            </div>
+                                                        </section>
 
-                                                <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                    {formData.email && (
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <label className="font-bold">Email</label>
-                                                        <p className="">{formData.email}</p>
-                                                    </div>
-                                                    )}
-                                                    {formData.telefone && (
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <label className="font-bold">Telefone</label>
-                                                        <p className="">{formData.telefone}</p>
-                                                    </div>
-                                                    )}
-                                                </section>
+                                                        <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Email</label>
+                                                                <p className="">{formData.email}</p>
+                                                            </div>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Telefone</label>
+                                                                <p className="">{formData.telefone}</p>
+                                                            </div>
+                                                        </section>
 
-                                                <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                    {formData.rua && (
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <label className="font-bold">Rua</label>
-                                                        <p className="">{formData.rua}</p>
-                                                    </div>
-                                                    )}
-                                                    {formData.bairro && (
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <label className="font-bold">Bairro</label>
-                                                        <p className="">{formData.bairro}</p>
-                                                    </div>
-                                                    )}
+                                                        <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Rua</label>
+                                                                <p className="">{formData.rua}</p>
+                                                            </div>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Bairro</label>
+                                                                <p className="">{formData.bairro}</p>
+                                                            </div>
 
-                                                </section>
-                                                <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                    {formData.cidade && (
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <label className="font-bold">Cidade</label>
-                                                        <p className="">{formData.cidade}</p>
+                                                        </section>
+                                                        <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Cidade</label>
+                                                                <p className="">{formData.cidade}</p>
+                                                            </div>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Número</label>
+                                                                <p>{formData.numero}</p>
+                                                            </div>
+                                                        </section>
+                                                        {formData.complemento && (
+                                                            <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                    <label className="font-bold">Complemento</label>
+                                                                    <p className="">{formData.complemento}</p>
+                                                                </div>
+                                                            </section>
+                                                        )}
+                                                        <section className='flex md:flex-col md:gap-2 w-full mb-4 gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setIsEditing(!isEditing)}
+                                                                    className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
+                                                                >
+                                                                    {isEditing ? 'Salvar' : 'Editar'}
+                                                                </button>
+                                                            </div>
+                                                        </section>
                                                     </div>
-                                                    )}
-                                                    {formData.numero && (
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <label className="font-bold">Número</label>
-                                                        <p>{formData.numero}</p>
+                                                </>
+                                            )}
+                                            {opcaoEntrega === 'retirada' && (
+                                                <>
+                                                    <div className='bg-white p-10 shadow-sm rounded-md'>
+                                                        <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Nome</label>
+                                                                <p className="">{formData.nome}</p>
+                                                            </div>
+                                                        </section>
+
+                                                        <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Email</label>
+                                                                <p className="">{formData.email}</p>
+                                                            </div>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Telefone</label>
+                                                                <p className="">{formData.telefone}</p>
+                                                            </div>
+                                                        </section>
+
+                                                        <section className='flex md:flex-col md:gap-2 w-full mb-4 gap-5 text-[#0D0D0D] font-grotesk'>
+                                                            <div className='flex flex-col gap-1 w-full'>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setIsEditing(!isEditing)}
+                                                                    className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
+                                                                >
+                                                                    {isEditing ? 'Salvar' : 'Editar'}
+                                                                </button>
+                                                            </div>
+                                                        </section>
                                                     </div>
-                                                    )}
-                                                </section>
-                                                {formData.complemento && (
-                                                    <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                        <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                            <label className="font-bold">Complemento</label>
-                                                            <p className="">{formData.complemento}</p>
-                                                        </div>
-                                                    </section>
-                                                )}
-                                                <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                    <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setIsEditing(!isEditing)}
-                                                            className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
-                                                        >
-                                                            {isEditing ? 'Salvar' : 'Editar'}
-                                                        </button>
-                                                    </div>
-                                                </section>
-                                            </div>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                     <section className='w-[33%] md-lg:w-full'>{/* resumo do pedido */}
@@ -446,7 +502,6 @@ const Shipping = () => {
                                                     type='submit'
                                                     onClick={handleSubmit((data) => {
                                                         onSubmit(data);
-                                                        handleFinalizarPedido();
                                                     })}
                                                     className='px-5 py-[6px] mt-3 rounded-sm font-extrabold hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
                                                 >Finalizar Pedido</button>
@@ -479,7 +534,7 @@ const Shipping = () => {
                                                 <div className="flex justify-between items-center w-full md:flex-col">
                                                     <div className="flex items-center md:flex-col">
                                                         <img
-                                                            src={`${process.env.REACT_APP_BACKEND_URL}/Images/products/${item.imagemFrente}`}
+                                                            src={imgFrente}
                                                             alt={item.nome}
                                                             className="w-[150px]"
                                                         />
@@ -516,7 +571,6 @@ const Shipping = () => {
                                                 </div>
                                             </div>
                                         ))}
-
                                     </div>
                                 </div>
                             </div>
