@@ -5,6 +5,7 @@ import { useCart } from '../context/CartProvider';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { FaTrashAlt } from "react-icons/fa";
+import imgFrente from '../assets/Images/products/1.png'
 
 const Shipping = () => {
 
@@ -19,33 +20,58 @@ const Shipping = () => {
 
     console.log({ errors })
 
-    const onSubmit = async (data) => {
-        const items = cartItems.map(item => ({
-            id: item.id,
-            title: `${item.nome} - ${item.tamanho}`,
-            quantity: item.quantidade,
-            unitPrice: parseFloat(item.preco.replace('R$', '').replace(',', '.')),
-            imagemFrente: item.imagemFrente // se quiser enviar imagem
-        }));
+    const gerarMensagemWhatsApp = (data) => {
+        let mensagem = `🛍️ *NOVO PEDIDO*\n\n`;
+        mensagem += `👤 *Dados do Cliente:*\n`;
+        mensagem += `• Nome: ${data.nome}\n`;
+        mensagem += `• Email: ${data.email}\n`;
+        mensagem += `• Telefone: ${data.telefone || 'Não informado'}\n\n`;
 
-        const response = await fetch("http://localhost:5000/api/payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                items,
-                clienteNome: data.nome,
-                clienteEmail: data.email
-            }),
+        // Opção de entrega
+        mensagem += `📦 *Entrega:* ${data.opcaoEntrega === 'entrega' ? 'Delivery' : 'Retirada no local'}\n\n`;
+
+        // Se for entrega, adicionar endereço
+        if (data.opcaoEntrega === 'entrega') {
+            mensagem += `🏠 *Endereço de Entrega:*\n`;
+            mensagem += `• Rua: ${data.rua}, ${data.numero}\n`;
+            mensagem += `• Bairro: ${data.bairro}\n`;
+            mensagem += `• Cidade: ${data.cidade}\n`;
+            if (data.complemento) {
+                mensagem += `• Complemento: ${data.complemento}\n`;
+            }
+            mensagem += `\n`;
+        }
+
+        // Produtos do carrinho
+        mensagem += `🛒 *Produtos:*\n`;
+        cartItems.forEach((item, index) => {
+            mensagem += `${index + 1}. ${item.nome}\n`;
+            mensagem += `   • Tamanho: ${item.tamanho}\n`;
+            mensagem += `   • Quantidade: ${item.quantidade}\n`;
+            mensagem += `   • Preço: ${item.preco}\n\n`;
         });
 
-        const resData = await response.json();
+        // Total
+        const totalGeral = cartItems.reduce((acc, item) => {
+            const preco = parseFloat(item.preco.replace("R$", "").replace(",", "."));
+            return acc + preco * item.quantidade;
+        }, 0);
 
-        if (resData?.init_point) {
-            window.location.href = resData.init_point;
-        } else {
-            console.error("Erro ao gerar link:", resData);
-        }
+        mensagem += `💰 *Total do Pedido: R$ ${totalGeral.toFixed(2).replace(".", ",")}*`;
+
+        return mensagem;
     };
+
+    const onSubmit = async (data) => {
+        const mensagem = gerarMensagemWhatsApp(data);
+
+        const numeroWhatsApp = "558197146120"; 
+
+        const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+
+        window.open(urlWhatsApp, '_blank');
+    };
+
 
     const [isEditing, setIsEditing] = useState(true)
     const [formData, setFormData] = useState({});
@@ -216,22 +242,31 @@ const Shipping = () => {
                                                                     />
                                                                 </div>
                                                             </section>
-
+                                                            {/*
                                                             <section className='flex md:flex-col md:gap-2 w-full mt-2 gap-5 text-[#0D0D0D] font-grotesk'>
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
                                                                     <button
                                                                         type="button"
                                                                         onClick={handleSubmit((data) => {
-                                                                            onSubmit(data);
                                                                             setFormData(data);
-                                                                            setIsEditing(false);
+
+                                                                            if (isEditing) {
+                                                                                // salvando os dados editados
+                                                                                console.log("Dados do cliente salvos:", data);
+                                                                                setIsEditing(false);
+                                                                            } else {
+                                                                                // entrando em modo de edição
+                                                                                setIsEditing(true);
+                                                                            }
                                                                         })}
                                                                         className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
                                                                     >
                                                                         {isEditing ? 'Salvar' : 'Editar'}
                                                                     </button>
+
                                                                 </div>
                                                             </section>
+                                                            */}
                                                         </>
                                                     )}
                                                     {opcaoEntrega === 'retirada' && (
@@ -294,7 +329,7 @@ const Shipping = () => {
                                                                     {errors?.telefone?.type === 'maxLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Número inválido</p>)}
                                                                 </div>
                                                             </section>
-
+                                                            {/*
                                                             <section className='flex md:flex-col md:gap-2 mt-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
                                                                     <button
@@ -310,9 +345,9 @@ const Shipping = () => {
                                                                     </button>
                                                                 </div>
                                                             </section>
+                                                            */}
                                                         </>
                                                     )}
-
                                                 </form>
                                             </div>
                                         </div>
@@ -333,7 +368,7 @@ const Shipping = () => {
                                                 <button
                                                     onClick={handleSubmit((data) => {
                                                         onSubmit(data);
-                                                        
+
                                                     })}
                                                     className='px-5 py-[6px] mt-3 rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
                                                 >Finalizar Pedido</button>
@@ -499,7 +534,7 @@ const Shipping = () => {
                                                 <div className="flex justify-between items-center w-full md:flex-col">
                                                     <div className="flex items-center md:flex-col">
                                                         <img
-                                                            src={`${process.env.REACT_APP_BACKEND_URL}/Images/products/${item.imagemFrente}`}
+                                                            src={imgFrente}
                                                             alt={item.nome}
                                                             className="w-[150px]"
                                                         />
@@ -536,7 +571,6 @@ const Shipping = () => {
                                                 </div>
                                             </div>
                                         ))}
-
                                     </div>
                                 </div>
                             </div>

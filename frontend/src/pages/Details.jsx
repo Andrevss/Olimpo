@@ -13,12 +13,26 @@ const Details = () => {
     const [imagemAtual, setImagemAtual] = useState(produto.imagemFrente);
     const [tamanhoSelecionado, setTamanhoSelecionado] = useState('');
     const { addToCart } = useCart();
+
+    // Função para verificar se o tamanho está disponível
+    const isTamanhoDisponivel = (tamanho) => {
+        // Se o produto não tem a propriedade tamanhosDisponiveis, considera todos disponíveis
+        if (!produto.tamanhosDisponiveis) return true;
+        return produto.tamanhosDisponiveis.includes(tamanho);
+    };
+
     const handleAdicionarAoCarrinho = () => {
         if (!tamanhoSelecionado) {
             alert('Selecione um tamanho!');
             return;
         }
         addToCart(produto, tamanhoSelecionado);
+    };
+
+    const handleSelecionarTamanho = (tamanho) => {
+        if (isTamanhoDisponivel(tamanho)) {
+            setTamanhoSelecionado(tamanho);
+        }
     };
 
     return (
@@ -34,7 +48,7 @@ const Details = () => {
                                         key={i}
                                         className={`w-[90px] h-[110px] object-cover cursor-pointer border ${imagemAtual === img ? 'border-[#F2A541]' : 'border-gray-200'
                                             } hover:border-[#F2A541] transition-all `}
-                                        src={`${process.env.REACT_APP_BACKEND_URL}/Images/products/${img}`}
+                                        src={img}
                                         alt={`Thumb ${i + 1}`}
                                         onClick={() => setImagemAtual(img)}
                                     />
@@ -43,7 +57,7 @@ const Details = () => {
                             <div className='flex mt-[1.25rem]'>
                                 <img
                                     className='h-[550px] w-full object-contain transition-all duration-300 md:justify-start'
-                                    src={`${process.env.REACT_APP_BACKEND_URL}/Images/products/${imagemAtual}`}
+                                    src={imagemAtual}
                                     alt={produto.nome}
                                 />
                             </div>
@@ -58,29 +72,36 @@ const Details = () => {
                             <div className="mb-2">
                                 <span className="font-semibold text-gray-800">Tamanho:</span>
                                 <div className="flex flex-wrap gap-2 mt-2">
-                                    {TamanhosDisponiveis.map((t) =>(
-                                        <button
-                                            key={t}
-                                            onClick={() => setTamanhoSelecionado(t)}
-                                            className={`
-                                                w-10 h-8 flex items-center justify-center 
-                                                rounded border transition-all text-sm font-semibold
-                                                ${tamanhoSelecionado === t
-                                                    ? 'bg-[#F2A541] text-white border-white'
-                                                    : 'bg-white text-black border-gray-300 hover:border-[#F2A541]'}
-                                            `}
-                                        >
-                                            {t}
-                                        </button>
-                                    ))}
+                                    {TamanhosDisponiveis.map((t) => {
+                                        const disponivel = isTamanhoDisponivel(t);
+                                        return (
+                                            <button
+                                                key={t}
+                                                onClick={() => handleSelecionarTamanho(t)}
+                                                disabled={!disponivel}
+                                                className={`
+                                                    w-10 h-8 flex items-center justify-center 
+                                                    rounded border transition-all text-sm font-semibold
+                                                    ${!disponivel 
+                                                        ? 'bg-gray-300 text-gray-500 border-gray-300 cursor-not-allowed opacity-50' 
+                                                        : tamanhoSelecionado === t
+                                                            ? 'bg-[#F2A541] text-white border-white'
+                                                            : 'bg-white text-black border-gray-300 hover:border-[#F2A541] cursor-pointer'
+                                                    }
+                                                `}
+                                            >
+                                                {t}
+                                            </button>
+                                        )
+                                    })}
                                 </div>
-
                             </div>
                             <span className='text-base text-justify text-gray-600 font-grotesk'>
-                                {produto.descDetalhada}</span>
+                                {produto.descDetalhada}
+                            </span>
                             <button
                                 onClick={handleAdicionarAoCarrinho}
-                                className=" bg-[#F2A541] hover:bg-[#F2A541]d18f33 text-white font-bold py-2 px-6 rounded md:mb-5"
+                                className="bg-[#F2A541] hover:bg-[#F2A541]d18f33 text-white font-bold py-2 px-6 rounded md:mb-5"
                             >
                                 COMPRAR
                             </button>
@@ -90,7 +111,6 @@ const Details = () => {
             </section>
             <Footer />
         </main>
-
     )
 }
 
