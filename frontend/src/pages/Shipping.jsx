@@ -9,10 +9,23 @@ import imgFrente from '../assets/Images/products/1.png'
 
 const Shipping = () => {
 
-    const { register, handleSubmit, formState: { errors }, watch, clearErrors } = useForm({
+    const { register, handleSubmit, setValue, formState: { errors }, watch, clearErrors } = useForm({
         shouldUnregister: true,
     });
+    const formatarTelefone = (value) => {
+        const numeroLimpo = value.replace(/\D/g, '');
 
+        if (numeroLimpo.length <= 2) {
+            return `(${numeroLimpo}`;
+        } else if (numeroLimpo.length <= 7) {
+            return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2)}`;
+        } else if (numeroLimpo.length <= 10) {
+            return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 6)}-${numeroLimpo.slice(6)}`;
+        } else {
+            return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 7)}-${numeroLimpo.slice(7, 11)}`;
+        }
+    };
+    const [telefoneDisplay, setTelefoneDisplay] = useState('');
     const opcaoEntrega = watch('opcaoEntrega')
     useEffect(() => {
         clearErrors();
@@ -65,7 +78,7 @@ const Shipping = () => {
     const onSubmit = async (data) => {
         const mensagem = gerarMensagemWhatsApp(data);
 
-        const numeroWhatsApp = "558197146120"; 
+        const numeroWhatsApp = "558197146120";
 
         const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
 
@@ -160,18 +173,40 @@ const Shipping = () => {
                                                                 </div>
 
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='phone'>Telefone</label>
+                                                                    <label htmlFor='telefone'>Telefone</label>
                                                                     <input
-                                                                        {...register('telefone', { required: true, minLength: 11, maxLength: 11 })}
-                                                                        type='number'
-                                                                        className={`appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                        {...register('telefone', {
+                                                                            required: true,
+                                                                            minLength: 10,
+                                                                            maxLength: 11,
+                                                                            pattern: /^[0-9]+$/
+                                                                        })}
+                                                                        type='text'
+                                                                        className={`w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
                                                                         name='telefone'
                                                                         id='telefone'
-                                                                        placeholder='(11) 1.1111-0000'
+                                                                        placeholder='(11) 91111-0000'
+                                                                        value={telefoneDisplay}
+                                                                        onChange={(e) => {
+                                                                            const valorDigitado = e.target.value;
+                                                                            const valorFormatado = formatarTelefone(valorDigitado);
+                                                                            setTelefoneDisplay(valorFormatado);
+
+                                                                            // Atualiza o valor no react-hook-form apenas com números
+                                                                            const valorLimpo = valorDigitado.replace(/\D/g, '');
+                                                                            setValue('telefone', valorLimpo);
+                                                                        }}
+                                                                        maxLength={15}
                                                                     />
-                                                                    {errors?.telefone?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>)}
-                                                                    {errors?.telefone?.type === 'minLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Número inválido</p>)}
-                                                                    {errors?.telefone?.type === 'maxLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Número inválido</p>)}
+                                                                    {errors?.telefone?.type === 'required' && (
+                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>
+                                                                    )}
+                                                                    {(errors?.telefone?.type === 'minLength' || errors?.telefone?.type === 'maxLength') && (
+                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Número deve ter entre 10 e 11 dígitos</p>
+                                                                    )}
+                                                                    {errors?.telefone?.type === 'pattern' && (
+                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Apenas números são permitidos</p>
+                                                                    )}
                                                                 </div>
                                                             </section>
 
@@ -315,18 +350,40 @@ const Shipping = () => {
                                                                 </div>
 
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='phone'>Telefone</label>
+                                                                    <label htmlFor='telefone'>Telefone</label>
                                                                     <input
-                                                                        {...register('telefone', { required: true, minLength: 11, maxLength: 11 })}
-                                                                        type='number'
-                                                                        className={`appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                        {...register('telefone', {
+                                                                            required: true,
+                                                                            minLength: 10,
+                                                                            maxLength: 11,
+                                                                            pattern: /^[0-9]+$/
+                                                                        })}
+                                                                        type='text'
+                                                                        className={`w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
                                                                         name='telefone'
                                                                         id='telefone'
-                                                                        placeholder='(11) 1.1111-0000'
+                                                                        placeholder='(11) 91111-0000'
+                                                                        value={telefoneDisplay}
+                                                                        onChange={(e) => {
+                                                                            const valorDigitado = e.target.value;
+                                                                            const valorFormatado = formatarTelefone(valorDigitado);
+                                                                            setTelefoneDisplay(valorFormatado);
+
+                                                                            // Atualiza o valor no react-hook-form apenas com números
+                                                                            const valorLimpo = valorDigitado.replace(/\D/g, '');
+                                                                            setValue('telefone', valorLimpo);
+                                                                        }}
+                                                                        maxLength={15}
                                                                     />
-                                                                    {errors?.telefone?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>)}
-                                                                    {errors?.telefone?.type === 'minLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Número inválido</p>)}
-                                                                    {errors?.telefone?.type === 'maxLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Número inválido</p>)}
+                                                                    {errors?.telefone?.type === 'required' && (
+                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>
+                                                                    )}
+                                                                    {(errors?.telefone?.type === 'minLength' || errors?.telefone?.type === 'maxLength') && (
+                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Número deve ter entre 10 e 11 dígitos</p>
+                                                                    )}
+                                                                    {errors?.telefone?.type === 'pattern' && (
+                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Apenas números são permitidos</p>
+                                                                    )}
                                                                 </div>
                                                             </section>
                                                             {/*
