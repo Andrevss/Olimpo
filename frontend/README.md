@@ -1,70 +1,125 @@
-# Getting Started with Create React App
+# Olimpo - E-commerce de Streetwear
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Um e-commerce moderno e responsivo desenvolvido em React, especializado em produtos de streetwear com foco na cultura pernambucana.
 
-## Available Scripts
+## Demonstração
 
-In the project directory, you can run:
+[Ver projeto ao vivo](https://olimpo-andrevss.vercel.app)
 
-### `npm start`
+## Funcionalidades
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Catálogo de produtos** com visualização de frente e verso
+- **Sistema de carrinho** completo com persistência
+- **Seleção de tamanhos** com indicação de disponibilidade
+- **Design responsivo** otimizado para mobile e desktop
+- **Carousel de banners** promocionais
+- **Integração WhatsApp** para finalização de pedidos
+- **Navegação intuitiva** com rotas dinâmicas
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tecnologias Utilizadas
 
-### `npm test`
+- **React** - Biblioteca JavaScript para interfaces
+- **React Router** - Roteamento de páginas
+- **Tailwind CSS** - Framework CSS utilitário
+- **React Multi Carousel** - Componente de carousel
+- **React Icons** - Biblioteca de ícones
+- **Context API** - Gerenciamento de estado global
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Estrutura do Projeto
 
-### `npm run build`
+```
+src/
+├── components/          # Componentes reutilizáveis
+│   ├── Header.jsx
+│   ├── Footer.jsx
+│   └── Banner.jsx
+├── pages/              # Páginas da aplicação
+│   ├── Home.jsx
+│   ├── Details.jsx
+│   └── Cart.jsx
+├── context/            # Context providers
+│   └── CartProvider.jsx
+├── data/               # Dados estáticos
+│   └── products.js
+├── assets/             # Recursos estáticos
+│   └── images/
+└── styles/             # Arquivos de estilo
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Como Executar
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Pré-requisitos
+- Node.js (versão 14 ou superior)
+- npm ou yarn
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Instalação
 
-### `npm run eject`
+1. Clone o repositório
+```bash
+git clone https://github.com/Andrevss/Olimpo.git
+cd Olimpo
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. Instale as dependências
+```bash
+npm install
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. Execute o projeto
+```bash
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+4. Abra [http://localhost:3000](http://localhost:3000) no navegador
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🎨 Funcionalidades Principais
 
-## Learn More
+### Sistema de Carrinho
+- Adicionar/remover produtos
+- Seleção de tamanhos
+- Cálculo automático de totais
+- Persistência entre sessões
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Catálogo de Produtos
+- Visualização com hover de imagens
+- Filtros de tamanho disponível
+- Páginas individuais de produto
+- Design responsivo
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Integração WhatsApp
+- Formatação automática de pedidos
+- Envio direto para WhatsApp Business
+- Dados completos do cliente e produtos
 
-### Code Splitting
+## Deploy
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+O projeto está configurado para deploy automático na Vercel:
 
-### Analyzing the Bundle Size
+1. Conecte seu repositório à Vercel
+2. Configure as variáveis de ambiente (se necessário)
+3. Deploy automático a cada push na branch main
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Próximas Funcionalidades
 
-### Making a Progressive Web App
+- [ ] Sistema de busca de produtos
+- [ ] Múltiplos métodos de pagamento
+- [ ] Painel administrativo
+- [ ] Newsletter e notificações
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Como Contribuir
 
-### Advanced Configuration
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Desenvolvedor
 
-### Deployment
+**André Vinicius**
+- GitHub: [@Andrevss](https://github.com/Andrevss)
+- LinkedIn: [(https://www.linkedin.com/in/andrevs-silva/)]
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Se este projeto te ajudou, considere dar uma estrela no repositório!
