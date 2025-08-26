@@ -39,7 +39,7 @@ const FeatureProduct = () => {
             </div>
 
             {listaProdutos.map((produto, i) => (
-                <div key={`${titulo}-${i}`} className="flex flex-col items-center w-[350px]">
+                <div key={`${titulo}-${i}`} className="flex flex-col items-center w-[280px] sm:w-[320px] md:w-[350px]">
                     <div className='relative group w-full h-auto overflow-hidden'>
                         <img
                             onClick={() => navigate(`/product/${produto.slug}`)}
@@ -55,7 +55,7 @@ const FeatureProduct = () => {
                         />
                         
                         <ul className='flex justify-center items-center gap-2 absolute bottom-[-40px] left-1/2 transform -translate-x-1/2 opacity-0 transition-all duration-700 group-hover:bottom-3 group-hover:opacity-100'>
-                            <li className='w-[38px] h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#F2A541] hover:text-white hover:rotate-[720deg] transition-all'
+                            <li className='w-[32px] h-[32px] sm:w-[38px] sm:h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#F2A541] hover:text-white hover:rotate-[720deg] transition-all'
                                 onClick={() => {
                                     const tamanhoSelecionado = sizeOption[produto.id];
                                     if (!tamanhoSelecionado) {
@@ -66,13 +66,13 @@ const FeatureProduct = () => {
                                     addToCart(produto, tamanhoSelecionado);
                                     mostrarPopupConfirmacao(produto, tamanhoSelecionado);
                                 }}>
-                                <MdOutlineShoppingCart />
+                                <MdOutlineShoppingCart className='text-sm sm:text-base' />
                             </li>
                             <li>
                                 <select
                                     id='sizeOption'
                                     name='sizeOption'
-                                    className='w-[38px] h-[30px] justify-center items-center rounded-lg text-sm font-grotesk'
+                                    className='w-[32px] h-[26px] sm:w-[38px] sm:h-[30px] justify-center items-center rounded-lg text-xs sm:text-sm font-grotesk'
                                     value={sizeOption[produto.id] || ''}
                                     onChange={(e) => setSizeOption(prev => ({
                                         ...prev,
@@ -98,9 +98,9 @@ const FeatureProduct = () => {
                         </ul>
                     </div>
 
-                    <div className='text-center'>
-                        <h2 className='md:text-3x1 font-grotesk text-[#1C1C1C] font-semibold capitalize'>{produto.nome}</h2>
-                        <span className='text-gray-700 font-grotesk'>{produto.preco}</span>
+                    <div className='text-center mt-2'>
+                        <h2 className='text-lg sm:text-xl md:text-2xl font-grotesk text-[#1C1C1C] font-semibold capitalize'>{produto.nome}</h2>
+                        <span className='text-sm sm:text-base text-gray-700 font-grotesk'>{produto.preco}</span>
                     </div>
                 </div>
             ))}
@@ -109,15 +109,14 @@ const FeatureProduct = () => {
 
     return (
         <>
-            <main className='w-[90%] flex flex-wrap justify-center gap-8 mx-auto'>
+            <main className='w-[95%] flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 mx-auto'>
                 {/* Seção Nossos Produtos */}
                 {renderSecaoProdutos(getProdutosPorIds(secoesProdutos.nossosProdutos), "Nossos Produtos")}
                 
-                {/* Espaçamento entre seções */}
                 <div className='w-full h-8'></div>
                 
-                {/* Seção Últimos Lançamentos */}
-                {renderSecaoProdutos(getProdutosPorIds(secoesProdutos.ultimosLancamentos), "Últimos Lançamentos")}
+                {/* Seção para ser usada quando tivermos uma variedade maior de produtos */}
+                {/*renderSecaoProdutos(getProdutosPorIds(secoesProdutos.ultimosLancamentos), "Últimos Lançamentos")*/}
             </main>
 
             {showPopup && addedProduct && (
