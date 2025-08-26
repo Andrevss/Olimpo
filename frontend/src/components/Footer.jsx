@@ -5,7 +5,6 @@ import { MdEmail } from "react-icons/md";
 import { FaCcMastercard } from "react-icons/fa";
 import { FaCcVisa } from "react-icons/fa";
 import { FaPix } from "react-icons/fa6";
-import { FaXTwitter } from "react-icons/fa6";
 import { FaWhatsapp } from "react-icons/fa";
 
 
@@ -28,8 +27,7 @@ const Footer = () => {
                         <h2 className='text-lg'>Nos siga nas redes sociais</h2>
                         <div className='flex gap-4 text-[#E0E0E0] mt-2 text-xl'>
                             <a href="https://www.instagram.com/olimpo081/?hl=pt-br" target="_blank" rel="noopener noreferrer" className="text-[#E0E0E0] hover:text-[#F2A541]"><FaInstagram /></a>
-                            <a href="###" className="text-[#E0E0E0] hover:text-[#F2A541]"><FaTiktok /></a>
-                            <a href="###" className="text-[#E0E0E0] hover:text-[#F2A541]"><FaXTwitter /></a>
+                            <a href="https://www.tiktok.com/@olimpo081pe?_t=ZM-8zCSydCmi86&_r=1" target="_blank" rel="noopener noreferrer" className="text-[#E0E0E0] hover:text-[#F2A541]"><FaTiktok /></a>
                         </div>
                     </div>
                 </section>

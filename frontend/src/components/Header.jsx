@@ -22,25 +22,11 @@ const Header = () => {
         <header className='w-full bg-white'>
             <section className='header-top bg-[#0D0D0D] md-lg:hidden'>
                 <div className='w-[85%] lg:w-[90%] mx-auto'>
-                    <div className='flex w-full justify-between items-center h-[50px] text-slate-500'>
-                        <ul className='font-grotesk flex justify-start item-center gap-8 font-semibold text-black'>
-                            <li className='flex relative justify-center text-[#E0E0E0] items-center gap-2 text-sm after:absolute after:h-[18px] after:w-[1px] after:bg-[#afafaf] after:-right-[16px]'>
-                                <span><MdEmail /></span>
-                                <span>contato_Olimpo81@outlook.com</span>
-                            </li>
-                            <li className='flex relative justify-center text-[#E0E0E0] items-center gap-2 text-sm'>
-                                <span><IoMdPhonePortrait /></span>
-                                <span>(81) 9.9714-6120</span>
-                            </li>
+                    <div className='flex w-full justify-center items-center h-[50px] text-slate-500'>
+                        <ul className='font-grotesk font-semibold text-white'>
+                            <span>OLIMPO | Sua streetwear de Recife</span>
                         </ul>
-                        <div>
-                            <div className='flex justify-center items-center gap-10'>
-                                <div className='flex justify-center items-center gap-4 text-[#E0E0E0]'>
-                                    <a href="https://www.instagram.com/olimpo081/?hl=pt-br" target="_blank" rel="noopener noreferrer" className="text-[#E0E0E0] hover:text-[#F2A541]"><FaInstagram /></a>
-                                    <a href="###" className="text-[#E0E0E0] hover:text-[#F2A541]"><FaTiktok /></a>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </section>
@@ -105,7 +91,7 @@ const Header = () => {
                 <div
                     onClick={() => setShowSidebar(true)}
                     className={`fixed top-0 left-0 w-screen h-screen z-20 bg-black bg-opacity-60 transition-opacity duration-300 ${showSidebar ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-                    <div className={`w-[300px] z-[999] transition-all duration-300 fixed top-0 ${showSidebar ? '-left-[300px]' : 'left-0'} bg-white h-screen py-6 px-8`}>
+                    <div className={`w-[300px] z-[100] transition-all duration-300 fixed top-0 ${showSidebar ? '-left-[300px]' : 'left-0'} bg-white h-screen py-6 px-8`}>
                         <ul className='font-grotesk flex flex-col gap-3 text-sm font-bold uppercase'>
                             <li>
                                 <Link to="/" className={`py-2 text-[16px] border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1  ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Home</Link>
