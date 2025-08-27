@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MdOutlineShoppingCart, MdCheck } from "react-icons/md";
 import { useCart } from '../../context/CartProvider';
 import { useNavigate } from 'react-router-dom';
 import { getProdutosPorIds, secoesProdutos } from '../../data/products'; // Novo arquivo para últimos lançamentos
+import { IoIosArrowDown } from "react-icons/io";
 
-const TamanhosDisponiveis = ['PP', 'P', 'M', 'G', 'GG'];
+
+const TamanhosDisponiveis = ['P', 'M', 'G', 'GG'];
 
 const FeatureProduct = () => {
     const [sizeOption, setSizeOption] = useState({});
@@ -22,7 +24,7 @@ const FeatureProduct = () => {
     const mostrarPopupConfirmacao = (produto, tamanho) => {
         setAddedProduct({ ...produto, tamanho });
         setShowPopup(true);
-        
+
         setTimeout(() => {
             setShowPopup(false);
             setAddedProduct(null);
@@ -53,7 +55,7 @@ const FeatureProduct = () => {
                             src={produto.imagemCostas}
                             alt=''
                         />
-                        
+
                         <ul className='flex justify-center items-center gap-2 absolute bottom-[-40px] left-1/2 transform -translate-x-1/2 opacity-0 transition-all duration-700 group-hover:bottom-3 group-hover:opacity-100'>
                             <li className='w-[32px] h-[32px] sm:w-[38px] sm:h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#F2A541] hover:text-white hover:rotate-[720deg] transition-all'
                                 onClick={() => {
@@ -68,11 +70,11 @@ const FeatureProduct = () => {
                                 }}>
                                 <MdOutlineShoppingCart className='text-sm sm:text-base' />
                             </li>
-                            <li>
+                            <li className="relative">
                                 <select
                                     id='sizeOption'
                                     name='sizeOption'
-                                    className='w-[32px] h-[26px] sm:w-[38px] sm:h-[30px] justify-center items-center rounded-lg text-xs sm:text-sm font-grotesk'
+                                    className='w-[40px] h-[26px] sm:w-[46px] sm:h-[30px] appearance-none bg-white border rounded-lg text-xs sm:text-sm font-grotesk text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#F2A541] focus:border-transparent pr-5'
                                     value={sizeOption[produto.id] || ''}
                                     onChange={(e) => setSizeOption(prev => ({
                                         ...prev,
@@ -83,7 +85,7 @@ const FeatureProduct = () => {
                                     {TamanhosDisponiveis.map((tamanho) => {
                                         const disponivel = isTamanhoDisponivel(produto, tamanho);
                                         return (
-                                            <option 
+                                            <option
                                                 key={tamanho}
                                                 value={tamanho}
                                                 disabled={!disponivel}
@@ -94,6 +96,11 @@ const FeatureProduct = () => {
                                         );
                                     })}
                                 </select>
+
+                                {/* Seta customizada */}
+                                <div className="absolute inset-y-0 right-1 flex items-center pointer-events-none">
+                                    <IoIosArrowDown  className="w-3 h-3 text-gray-600" />
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -112,9 +119,9 @@ const FeatureProduct = () => {
             <main className='w-[95%] flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 mx-auto'>
                 {/* Seção Nossos Produtos */}
                 {renderSecaoProdutos(getProdutosPorIds(secoesProdutos.nossosProdutos), "Nossos Produtos")}
-                
+
                 <div className='w-full h-8'></div>
-                
+
                 {/* Seção para ser usada quando tivermos uma variedade maior de produtos */}
                 {/*renderSecaoProdutos(getProdutosPorIds(secoesProdutos.ultimosLancamentos), "Últimos Lançamentos")*/}
             </main>

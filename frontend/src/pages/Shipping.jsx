@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { FaTrashAlt } from "react-icons/fa";
 import imgFrente from '../assets/Images/products/1.png'
+import { IoIosArrowDown } from "react-icons/io";
 
 const Shipping = () => {
 
@@ -87,7 +88,7 @@ const Shipping = () => {
 
 
     const [isEditing, setIsEditing] = useState(true)
-    const [formData, setFormData] = useState({});
+    const [formData] = useState({});
     const { cartItems, decreaseQuantity, increaseQuantity, removeFromCart } = useCart();
 
     const totalItens = cartItems.reduce((acc, item) => acc + item.quantidade, 0);
@@ -111,16 +112,23 @@ const Shipping = () => {
                                                 <h2 className='text-[#0D0D0D] font-bold pb-3 font-grotesk text-lg'>Informações para Entrega</h2>
                                                 <form>
                                                     <div className='flex flex-col gap-1 mb-2 w-full font-grotesk'>
-                                                        <select
-                                                            id='opcaoEntrega'
-                                                            name='opcaoEntrega'
-                                                            className={`w-full px-3 py-2 rounded-md ${errors.opcaoEntrega ? 'outline outline-[1px] outline-[#ff4848]' : 'border border-slate-200'}`}
-                                                            {...register('opcaoEntrega', { required: true })}
-                                                        >
-                                                            <option value=''>Selecione uma opção</option>
-                                                            <option value='entrega'>Entrega</option>
-                                                            <option value='retirada'>Retirada</option>
-                                                        </select>
+                                                        <div className="relative">
+                                                            <select
+                                                                id='opcaoEntrega'
+                                                                name='opcaoEntrega'
+                                                                className={`w-full px-3 py-2 pr-8 rounded-md appearance-none bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#F2A541] focus:border-transparent ${errors.opcaoEntrega ? 'outline outline-[1px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                {...register('opcaoEntrega', { required: true })}
+                                                            >
+                                                                <option value=''>Selecione uma opção</option>
+                                                                <option value='entrega'>Entrega</option>
+                                                                <option value='retirada'>Retirada</option>
+                                                            </select>
+
+                                                            {/* Seta customizada */}
+                                                            <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+                                                                <IoIosArrowDown className="w-4 h-4 text-gray-600" />
+                                                            </div>
+                                                        </div>
                                                         {errors.opcaoEntrega && (
                                                             <p className="text-[#ff4848] text-xs font-semibold mt-1">
                                                                 Por favor, selecione a forma de entrega

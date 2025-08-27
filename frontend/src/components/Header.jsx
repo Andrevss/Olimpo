@@ -36,10 +36,10 @@ const Header = () => {
                                     <span className='text-[20px]'><PiList /></span>
                                 </div>
                                 <Link to='/'>
-                                    <img className="w-28 sm:w-32 md:w-36 h-auto" src={logo1} alt="" />
+                                    <img className="w-32 sm:w-36 md:w-40 h-auto" src={logo1} alt="" />
                                 </Link>
                                 <div className='relative lg:hidden md-lg:flex xl:hidden hidden cursor-pointer' onClick={redirect}>
-                                    <span className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-sm font-bold uppercase ${pathname === '/shipping' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>
+                                    <span className={`border-b-2  border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-base font-bold uppercase ${pathname === '/shipping' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>
                                         carrinho
                                     </span>
 
@@ -53,7 +53,7 @@ const Header = () => {
                         </div>
                         <nav className='md:lg:w-full '>
                             <div className='flex justify-between md-lg:justify-center items-center flex-wrap pl-6'>
-                                <ul className='font-grotesk flex justify-center items-center gap-5 text-sm font-bold uppercase md-lg:hidden '>
+                                <ul className='font-grotesk flex justify-center items-center gap-5 text-base font-bold uppercase md-lg:hidden '>
                                     <li>
                                         <Link to="/" className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1 block ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Home</Link>
                                     </li>
@@ -89,7 +89,7 @@ const Header = () => {
                     onClick={() => setShowSidebar(true)}
                     className={`fixed top-0 left-0 w-screen h-screen z-20 bg-black bg-opacity-60 transition-opacity duration-300 ${showSidebar ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
                     <div className={`w-[300px] z-[999] transition-all duration-300 fixed top-0 ${showSidebar ? '-left-[300px]' : 'left-0'} bg-white h-screen py-6 px-8`}>
-                        <ul className='font-grotesk flex flex-col gap-3 text-sm font-bold uppercase'>
+                        <ul className='font-grotesk flex flex-col gap-3 text-base font-bold uppercase'>
                             <li>
                                 <Link to="/" className={`py-2 text-[14px] border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 p-1  ${pathname === '/' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>Home</Link>
                             </li>
