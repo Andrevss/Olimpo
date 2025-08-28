@@ -39,7 +39,7 @@ const Header = () => {
                                     <img className="w-32 sm:w-36 md:w-40 h-auto" src={logo1} alt="" />
                                 </Link>
                                 <div className='relative lg:hidden md-lg:flex xl:hidden hidden cursor-pointer' onClick={redirect}>
-                                    <span className={`border-b-2  border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-base font-bold uppercase ${pathname === '/shipping' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>
+                                    <span className={`border-b-2  border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-sm font-bold uppercase ${pathname === '/shipping' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>
                                         carrinho
                                     </span>
 
@@ -70,9 +70,9 @@ const Header = () => {
                             <div className='flex md-lg:hidden justify-center items-center gap-4'>
                                 <div className='flex justify-center gap-4'>
                                     <div className='relative flex justify-center items-center cursor-pointer w-[30px] h-[30px]'>
-                                        <span onClick={redirect} className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-sm font-bold uppercase ${pathname === '/shipping' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>carrinho</span>
+                                        <span onClick={redirect} className={`border-b-2 border-transparent hover:border-[#F2A541]/40 transition-all duration-300 font-grotesk text-base font-bold uppercase ${pathname === '/shipping' ? 'text-[#F2A541]' : 'text-[#1C1C1C]'}`}>carrinho</span>
                                         {cartCount > 0 && (
-                                            <div className='w-[16px] h-[16px] absolute bg-[#F2A541] rounded-full text-white text-[10px] font-bold flex justify-center items-center -top-[2px] -right-[36px] font-grotesk'>
+                                            <div className='w-[16px] h-[16px] absolute bg-[#F2A541] rounded-full text-white text-[10px] font-bold flex justify-center items-center -top-[5px] -right-[36px] font-grotesk'>
                                                 <span>{cartCount}</span>
                                             </div>
                                         )}

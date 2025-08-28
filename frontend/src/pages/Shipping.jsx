@@ -35,18 +35,18 @@ const Shipping = () => {
     console.log({ errors })
 
     const gerarMensagemWhatsApp = (data) => {
-        let mensagem = `🛍️ *NOVO PEDIDO*\n\n`;
-        mensagem += `👤 *Dados do Cliente:*\n`;
+        let mensagem = `*NOVO PEDIDO*\n\n`;
+        mensagem += ` *Dados do Cliente:*\n`;
         mensagem += `• Nome: ${data.nome}\n`;
         mensagem += `• Email: ${data.email}\n`;
         mensagem += `• Telefone: ${data.telefone || 'Não informado'}\n\n`;
 
         // Opção de entrega
-        mensagem += `📦 *Entrega:* ${data.opcaoEntrega === 'entrega' ? 'Delivery' : 'Retirada no local'}\n\n`;
+        mensagem += `*Entrega:* ${data.opcaoEntrega === 'entrega' ? 'Delivery' : 'Retirada no local'}\n\n`;
 
         // Se for entrega, adicionar endereço
         if (data.opcaoEntrega === 'entrega') {
-            mensagem += `🏠 *Endereço de Entrega:*\n`;
+            mensagem += `*Endereço de Entrega:*\n`;
             mensagem += `• Rua: ${data.rua}, ${data.numero}\n`;
             mensagem += `• Bairro: ${data.bairro}\n`;
             mensagem += `• Cidade: ${data.cidade}\n`;
@@ -57,7 +57,7 @@ const Shipping = () => {
         }
 
         // Produtos do carrinho
-        mensagem += `🛒 *Produtos:*\n`;
+        mensagem += `*Produtos:*\n`;
         cartItems.forEach((item, index) => {
             mensagem += `${index + 1}. ${item.nome}\n`;
             mensagem += `   • Tamanho: ${item.tamanho}\n`;
@@ -71,7 +71,7 @@ const Shipping = () => {
             return acc + preco * item.quantidade;
         }, 0);
 
-        mensagem += `💰 *Total do Pedido: R$ ${totalGeral.toFixed(2).replace(".", ",")}*`;
+        mensagem += `*Total do Pedido: R$ ${totalGeral.toFixed(2).replace(".", ",")}*`;
 
         return mensagem;
     };
@@ -185,9 +185,9 @@ const Shipping = () => {
                                                                     <input
                                                                         {...register('telefone', {
                                                                             required: true,
-                                                                            minLength: 10,
-                                                                            maxLength: 11,
-                                                                            pattern: /^[0-9]+$/
+                                                                            minLength: 14,
+                                                                            maxLength: 15,
+                                                                            pattern: /^\([0-9]{2}\)\s[0-9]{4,5}-[0-9]{4}$/
                                                                         })}
                                                                         type='text'
                                                                         className={`w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
@@ -362,9 +362,9 @@ const Shipping = () => {
                                                                     <input
                                                                         {...register('telefone', {
                                                                             required: true,
-                                                                            minLength: 10,
-                                                                            maxLength: 11,
-                                                                            pattern: /^[0-9]+$/
+                                                                            minLength: 14,
+                                                                            maxLength: 15,
+                                                                            pattern: /^\([0-9]{2}\)\s[0-9]{4,5}-[0-9]{4}$/
                                                                         })}
                                                                         type='text'
                                                                         className={`w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
