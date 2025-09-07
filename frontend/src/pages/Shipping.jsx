@@ -10,6 +10,10 @@ import { IoIosArrowDown } from "react-icons/io";
 
 const Shipping = () => {
 
+    const API_URL = process.env.NODE_ENV === 'production'
+        ? 'https://futuro-link.com/api'
+        : 'http://localhost:5172/api';
+    
     const { register, handleSubmit, setValue, formState: { errors }, watch, clearErrors } = useForm({
         shouldUnregister: true,
     });
@@ -31,10 +35,117 @@ const Shipping = () => {
     useEffect(() => {
         clearErrors();
     }, [opcaoEntrega, clearErrors]);
+     const [valorFrete, setValorFrete] = useState(0);
+    const [calculandoFrete, setCalculandoFrete] = useState(false);
+    const [processandoPedido, setProcessandoPedido] = useState(false);
+    
 
     console.log({ errors })
 
-    const gerarMensagemWhatsApp = (data) => {
+    const calcularFrete = async (cepDestino) => {
+        if (!cepDestino || cepDestino.length < 8) return;
+        
+        setCalculandoFrete(true);
+        
+        try {
+            // Preparar itens para envio para API
+            const itensParaAPI = cartItems.map(item => ({
+                produtoId: item.id,
+                tamanho: item.tamanho,
+                quantidade: item.quantidade,
+                precoUnitario: parseFloat(item.preco.replace("R$", "").replace(",", "."))
+            }));
+
+            const response = await fetch(`${API_URL}/pedidos/calcular-frete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    cep: cepDestino.replace(/\D/g, ''), // Limpar formatação
+                    itens: itensParaAPI
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                setValorFrete(result.valorFrete);
+            } else {
+                console.error('Erro ao calcular frete');
+                alert('Erro ao calcular frete. Verifique o CEP.');
+            }
+        } catch (error) {
+            console.error('Erro ao calcular frete:', error);
+            alert('Erro ao calcular frete. Tente novamente.');
+        } finally {
+            setCalculandoFrete(false);
+        }
+    };
+
+    const finalizarPedidoComAPI = async (dadosFormulario) => {
+        setProcessandoPedido(true);
+        
+        try {
+            // Preparar dados do pedido para API
+            const itensParaAPI = cartItems.map(item => ({
+                produtoId: item.id,
+                tamanho: item.tamanho,
+                quantidade: item.quantidade,
+                precoUnitario: parseFloat(item.preco.replace("R$", "").replace(",", "."))
+            }));
+
+            const pedidoData = {
+                clienteNome: dadosFormulario.nome,
+                clienteEmail: dadosFormulario.email,
+                clienteTelefone: dadosFormulario.telefone || '',
+                cep: dadosFormulario.cep ? dadosFormulario.cep.replace(/\D/g, '') : '',
+                endereco: dadosFormulario.rua ? 
+                    `${dadosFormulario.rua}, ${dadosFormulario.numero}${dadosFormulario.complemento ? ', ' + dadosFormulario.complemento : ''}` : 
+                    'Retirada no local',
+                cidade: dadosFormulario.cidade || '',
+                estado: dadosFormulario.estado || 'PE', // Você pode adicionar campo de estado no form
+                itens: itensParaAPI
+            };
+
+            console.log('Enviando pedido:', pedidoData);
+
+            const response = await fetch(`${API_URL}/pedidos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', // Para manter sessão
+                body: JSON.stringify(pedidoData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Pedido criado:', result);
+                
+                // Redirecionar para Mercado Pago
+                if (result.urlPagamento) {
+                    window.location.href = result.urlPagamento;
+                } else {
+                    alert('Erro: URL de pagamento não retornada');
+                }
+            } else {
+                const error = await response.json();
+                console.error('Erro ao criar pedido:', error);
+                alert(`Erro ao criar pedido: ${error.erro || 'Erro desconhecido'}`);
+            }
+        } catch (error) {
+            console.error('Erro ao finalizar pedido:', error);
+            alert('Erro ao finalizar pedido. Tente novamente.');
+        } finally {
+            setProcessandoPedido(false);
+        }
+    };
+
+    const onSubmit = async (data) => {
+        await finalizarPedidoComAPI(data);
+    };
+
+    {/*const gerarMensagemWhatsApp = (data) => {
         let mensagem = `🛍️ *NOVO PEDIDO*\n\n`;
         mensagem += `👤 *Dados do Cliente:*\n`;
         mensagem += `• Nome: ${data.nome}\n`;
@@ -84,7 +195,7 @@ const Shipping = () => {
         const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
 
         window.open(urlWhatsApp, '_blank');
-    };
+    };*/}
 
 
     const [isEditing, setIsEditing] = useState(true)
@@ -209,12 +320,27 @@ const Shipping = () => {
                                                                     {errors?.telefone?.type === 'required' && (
                                                                         <p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>
                                                                     )}
-                                                                    {(errors?.telefone?.type === 'minLength' || errors?.telefone?.type === 'maxLength') && (
-                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Número deve ter entre 10 e 11 dígitos</p>
-                                                                    )}
+                                                                    
                                                                     {errors?.telefone?.type === 'pattern' && (
                                                                         <p className='text-[#ff4848] text-sm font-semibold'>Apenas números são permitidos</p>
                                                                     )}
+                                                                </div>
+                                                            </section>
+
+                                                            <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                    <label htmlFor='name'>CEP</label>
+                                                                    <input
+                                                                        {...register('nome', { required: true, minLength: 1 })}
+                                                                        type='text'
+                                                                        className={`w-full px-3 py-2 rounded-md ${errors.nome ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                        name='nome'
+                                                                        id='nome'
+                                                                        placeholder='Insira seu nome completo'
+                                                                    />
+                                                                    {errors?.nome?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>CEP é obrigatório</p>)}
+                                                                    {errors?.nome?.type === 'minLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Insira um CEP</p>)}
+
                                                                 </div>
                                                             </section>
 
@@ -357,42 +483,7 @@ const Shipping = () => {
                                                                     )}
                                                                 </div>
 
-                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='telefone'>Telefone</label>
-                                                                    <input
-                                                                        {...register('telefone', {
-                                                                            required: true,
-                                                                            minLength: 10,
-                                                                            maxLength: 11,
-                                                                            pattern: /^[0-9]+$/
-                                                                        })}
-                                                                        type='text'
-                                                                        className={`w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
-                                                                        name='telefone'
-                                                                        id='telefone'
-                                                                        placeholder='(11) 91111-0000'
-                                                                        value={telefoneDisplay}
-                                                                        onChange={(e) => {
-                                                                            const valorDigitado = e.target.value;
-                                                                            const valorFormatado = formatarTelefone(valorDigitado);
-                                                                            setTelefoneDisplay(valorFormatado);
-
-                                                                            // Atualiza o valor no react-hook-form apenas com números
-                                                                            const valorLimpo = valorDigitado.replace(/\D/g, '');
-                                                                            setValue('telefone', valorLimpo);
-                                                                        }}
-                                                                        maxLength={15}
-                                                                    />
-                                                                    {errors?.telefone?.type === 'required' && (
-                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>
-                                                                    )}
-                                                                    {(errors?.telefone?.type === 'minLength' || errors?.telefone?.type === 'maxLength') && (
-                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Número deve ter entre 10 e 11 dígitos</p>
-                                                                    )}
-                                                                    {errors?.telefone?.type === 'pattern' && (
-                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Apenas números são permitidos</p>
-                                                                    )}
-                                                                </div>
+                                                                
                                                             </section>
                                                             {/*
                                                             <section className='flex md:flex-col md:gap-2 mt-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
