@@ -200,7 +200,7 @@ const Shipping = () => {
                                                                             const valorFormatado = formatarTelefone(valorDigitado);
                                                                             setTelefoneDisplay(valorFormatado);
 
-                                                                            // Atualiza o valor no react-hook-form apenas com números
+                                                                            // Atualiza o valor no react-hook-form apenas com números testando 
                                                                             const valorLimpo = valorDigitado.replace(/\D/g, '');
                                                                             setValue('telefone', valorLimpo);
                                                                         }}
