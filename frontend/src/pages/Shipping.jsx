@@ -10,9 +10,14 @@ import { IoIosArrowDown } from "react-icons/io";
 
 const Shipping = () => {
 
+    const API_URL = process.env.NODE_ENV === 'production'
+        ? 'https://futuro-link.com/api'
+        : 'http://localhost:5172/api';
+    
     const { register, handleSubmit, setValue, formState: { errors }, watch, clearErrors } = useForm({
         shouldUnregister: true,
     });
+
     const formatarTelefone = (value) => {
         const numeroLimpo = value.replace(/\D/g, '');
 
@@ -26,76 +31,141 @@ const Shipping = () => {
             return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 7)}-${numeroLimpo.slice(7, 11)}`;
         }
     };
+
+    const formatarCEP = (value) => {
+        const numeroLimpo = value.replace(/\D/g, '');
+        if (numeroLimpo.length > 5) {
+            return `${numeroLimpo.slice(0, 5)}-${numeroLimpo.slice(5, 8)}`;
+        }
+        return numeroLimpo;
+    };
+
     const [telefoneDisplay, setTelefoneDisplay] = useState('');
-    const opcaoEntrega = watch('opcaoEntrega')
+    const [cepDisplay, setCepDisplay] = useState('');
+    const opcaoEntrega = watch('opcaoEntrega');
+    
     useEffect(() => {
         clearErrors();
     }, [opcaoEntrega, clearErrors]);
 
+    const [valorFrete, setValorFrete] = useState(0);
+    const [calculandoFrete, setCalculandoFrete] = useState(false);
+    const [processandoPedido, setProcessandoPedido] = useState(false);
+    
     console.log({ errors })
 
-    const gerarMensagemWhatsApp = (data) => {
-        let mensagem = `*NOVO PEDIDO*\n\n`;
-        mensagem += ` *Dados do Cliente:*\n`;
-        mensagem += `• Nome: ${data.nome}\n`;
-        mensagem += `• Email: ${data.email}\n`;
-        mensagem += `• Telefone: ${data.telefone || 'Não informado'}\n\n`;
+    const calcularFrete = async (cepDestino) => {
+        if (!cepDestino || cepDestino.length < 8) return;
+        
+        setCalculandoFrete(true);
+        
+        try {
+            // Preparar itens para envio para API
+            const itensParaAPI = cartItems.map(item => ({
+                produtoId: item.id,
+                tamanho: item.tamanho,
+                quantidade: item.quantidade,
+                precoUnitario: parseFloat(item.preco.replace("R$", "").replace(",", "."))
+            }));
 
-        // Opção de entrega
-        mensagem += `*Entrega:* ${data.opcaoEntrega === 'entrega' ? 'Delivery' : 'Retirada no local'}\n\n`;
+            const response = await fetch(`${API_URL}/pedidos/calcular-frete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    cep: cepDestino.replace(/\D/g, ''), // Limpar formatação
+                    itens: itensParaAPI
+                })
+            });
 
-        // Se for entrega, adicionar endereço
-        if (data.opcaoEntrega === 'entrega') {
-            mensagem += `*Endereço de Entrega:*\n`;
-            mensagem += `• Rua: ${data.rua}, ${data.numero}\n`;
-            mensagem += `• Bairro: ${data.bairro}\n`;
-            mensagem += `• Cidade: ${data.cidade}\n`;
-            if (data.complemento) {
-                mensagem += `• Complemento: ${data.complemento}\n`;
+            if (response.ok) {
+                const result = await response.json();
+                setValorFrete(result.valorFrete);
+            } else {
+                console.error('Erro ao calcular frete');
+                alert('Erro ao calcular frete. Verifique o CEP.');
             }
-            mensagem += `\n`;
+        } catch (error) {
+            console.error('Erro ao calcular frete:', error);
+            alert('Erro ao calcular frete. Tente novamente.');
+        } finally {
+            setCalculandoFrete(false);
         }
+    };
 
-        // Produtos do carrinho
-        mensagem += `*Produtos:*\n`;
-        cartItems.forEach((item, index) => {
-            mensagem += `${index + 1}. ${item.nome}\n`;
-            mensagem += `   • Tamanho: ${item.tamanho}\n`;
-            mensagem += `   • Quantidade: ${item.quantidade}\n`;
-            mensagem += `   • Preço: ${item.preco}\n\n`;
-        });
+    const finalizarPedidoComAPI = async (dadosFormulario) => {
+        setProcessandoPedido(true);
+        
+        try {
+            // Preparar dados do pedido para API
+            const itensParaAPI = cartItems.map(item => ({
+                produtoId: item.id,
+                tamanho: item.tamanho,
+                quantidade: item.quantidade,
+                precoUnitario: parseFloat(item.preco.replace("R$", "").replace(",", "."))
+            }));
 
-        // Total
-        const totalGeral = cartItems.reduce((acc, item) => {
-            const preco = parseFloat(item.preco.replace("R$", "").replace(",", "."));
-            return acc + preco * item.quantidade;
-        }, 0);
+            const pedidoData = {
+                clienteNome: dadosFormulario.nome,
+                clienteEmail: dadosFormulario.email,
+                clienteTelefone: dadosFormulario.telefone || '',
+                cep: dadosFormulario.cep ? dadosFormulario.cep.replace(/\D/g, '') : '',
+                endereco: dadosFormulario.rua ? 
+                    `${dadosFormulario.rua}, ${dadosFormulario.numero}${dadosFormulario.complemento ? ', ' + dadosFormulario.complemento : ''}` : 
+                    'Retirada no local',
+                cidade: dadosFormulario.cidade || '',
+                estado: dadosFormulario.estado || 'PE',
+                itens: itensParaAPI
+            };
 
-        mensagem += `*Total do Pedido: R$ ${totalGeral.toFixed(2).replace(".", ",")}*`;
+            console.log('Enviando pedido:', pedidoData);
 
-        return mensagem;
+            const response = await fetch(`${API_URL}/pedidos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(pedidoData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Pedido criado:', result);
+                
+                if (result.urlPagamento) {
+                    window.location.href = result.urlPagamento;
+                } else {
+                    alert('Erro: URL de pagamento não retornada');
+                }
+            } else {
+                const error = await response.json();
+                console.error('Erro ao criar pedido:', error);
+                alert(`Erro ao criar pedido: ${error.erro || 'Erro desconhecido'}`);
+            }
+        } catch (error) {
+            console.error('Erro ao finalizar pedido:', error);
+            alert('Erro ao finalizar pedido. Tente novamente.');
+        } finally {
+            setProcessandoPedido(false);
+        }
     };
 
     const onSubmit = async (data) => {
-        const mensagem = gerarMensagemWhatsApp(data);
-
-        const numeroWhatsApp = "558197146120";
-
-        const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
-
-        window.open(urlWhatsApp, '_blank');
+        await finalizarPedidoComAPI(data);
     };
-
 
     const [isEditing, setIsEditing] = useState(true)
     const [formData] = useState({});
     const { cartItems, decreaseQuantity, increaseQuantity, removeFromCart } = useCart();
 
     const totalItens = cartItems.reduce((acc, item) => acc + item.quantidade, 0);
-    const totalGeral = cartItems.reduce((acc, item) => {
+    const totalProdutos = cartItems.reduce((acc, item) => {
         const preco = parseFloat(item.preco.replace("R$", "").replace(",", "."));
         return acc + preco * item.quantidade;
     }, 0);
+    const totalGeral = totalProdutos + (opcaoEntrega === 'entrega' ? valorFrete : 0);
 
     return (
         <div className='min-h-screen flex flex-col'>
@@ -215,6 +285,43 @@ const Shipping = () => {
                                                                     {errors?.telefone?.type === 'pattern' && (
                                                                         <p className='text-[#ff4848] text-sm font-semibold'>Apenas números são permitidos</p>
                                                                     )}
+                                                                </div>
+                                                            </section>
+
+                                                            <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                    <label htmlFor='cep'>CEP</label>
+                                                                    <input
+                                                                        {...register('cep', { 
+                                                                            required: true,
+                                                                            validate: (value) => {
+                                                                                const numeroLimpo = value?.replace(/\D/g, '') || '';
+                                                                                return numeroLimpo.length === 8;
+                                                                            }
+                                                                        })}
+                                                                        type='text'
+                                                                        className={`w-full px-3 py-2 rounded-md ${errors.cep ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                        name='cep'
+                                                                        id='cep'
+                                                                        placeholder='00000-000'
+                                                                        value={cepDisplay}
+                                                                        onChange={(e) => {
+                                                                            const valorDigitado = e.target.value;
+                                                                            const valorFormatado = formatarCEP(valorDigitado);
+                                                                            setCepDisplay(valorFormatado);
+
+                                                                            const valorLimpo = valorDigitado.replace(/\D/g, '');
+                                                                            setValue('cep', valorLimpo);
+
+                                                                            // Calcular frete quando CEP estiver completo
+                                                                            if (valorLimpo.length === 8) {
+                                                                                calcularFrete(valorLimpo);
+                                                                            }
+                                                                        }}
+                                                                        maxLength={9}
+                                                                    />
+                                                                    {errors?.cep?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>CEP é obrigatório</p>)}
+                                                                    {errors?.cep?.type === 'validate' && (<p className='text-[#ff4848] text-sm font-semibold'>CEP deve ter 8 dígitos</p>)}
                                                                 </div>
                                                             </section>
 
@@ -418,25 +525,41 @@ const Shipping = () => {
                                         </div>
                                     </div>
 
-                                    <section className='w-[33%] md-lg:w-full '>{/* resumo do pedido */}
+                                    <section className='w-[33%] md-lg:w-full'>
                                         <div className='pl-3 md-lg:pl-0 md-lg:mt-5'>
-                                            <div className='bg-white font-grotesk text-[#0D0D0D] flex flex-col p-3 rounded-md '>
+                                            <div className='bg-white font-grotesk text-[#0D0D0D] flex flex-col p-3 rounded-md'>
                                                 <h2 className='text-lg font-bold'>Resumo do Pedido</h2>
                                                 <div className='flex justify-between mt-2'>
-                                                    <span>Produtos</span>
-                                                    <span>{totalItens}</span>
+                                                    <span>Produtos ({totalItens})</span>
+                                                    <span>R$ {totalProdutos.toFixed(2)}</span>
                                                 </div>
+                                                
                                                 <div className='flex justify-between mt-2'>
+                                                    <span>Frete</span>
+                                                    <span>
+                                                        {opcaoEntrega === 'retirada' ? 'R$ 0,00' :
+                                                         calculandoFrete ? 'Calculando...' : 
+                                                         valorFrete > 0 ? `R$ ${valorFrete.toFixed(2)}` : 'Digite o CEP'}
+                                                    </span>
+                                                </div>
+                                                
+                                                <hr className='my-2' />
+                                                <div className='flex justify-between mt-2 font-bold'>
                                                     <span>Total</span>
                                                     <span>R$ {totalGeral.toFixed(2)}</span>
                                                 </div>
+                                                
                                                 <button
-                                                    onClick={handleSubmit((data) => {
-                                                        onSubmit(data);
-
-                                                    })}
-                                                    className='px-5 py-[6px] mt-3 rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
-                                                >Finalizar Pedido</button>
+                                                    onClick={handleSubmit(onSubmit)}
+                                                    disabled={processandoPedido || (opcaoEntrega === 'entrega' && valorFrete === 0)}
+                                                    className={`px-5 py-[6px] mt-3 rounded-sm font-bold transition-colors ${
+                                                        processandoPedido || (opcaoEntrega === 'entrega' && valorFrete === 0)
+                                                            ? 'bg-gray-400 cursor-not-allowed text-gray-600' 
+                                                            : 'bg-black text-[#F2A541] hover:shadow-[#F2A541] hover:shadow-lg'
+                                                    }`}
+                                                >
+                                                    {processandoPedido ? 'Processando...' : 'Ir para Pagamento'}
+                                                </button>
                                             </div>
                                         </div>
                                     </section>
