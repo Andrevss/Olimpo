@@ -9,10 +9,6 @@ import imgFrente from '../assets/Images/products/1.png'
 import { IoIosArrowDown } from "react-icons/io";
 
 const Shipping = () => {
-
-    const API_URL = process.env.NODE_ENV === 'production'
-        ? 'https://futuro-link.com/api'
-        : 'http://localhost:5172/api';
     
     const { register, handleSubmit, setValue, formState: { errors }, watch, clearErrors } = useForm({
         shouldUnregister: true,
@@ -35,117 +31,10 @@ const Shipping = () => {
     useEffect(() => {
         clearErrors();
     }, [opcaoEntrega, clearErrors]);
-     const [valorFrete, setValorFrete] = useState(0);
-    const [calculandoFrete, setCalculandoFrete] = useState(false);
-    const [processandoPedido, setProcessandoPedido] = useState(false);
-    
 
     console.log({ errors })
 
-    const calcularFrete = async (cepDestino) => {
-        if (!cepDestino || cepDestino.length < 8) return;
-        
-        setCalculandoFrete(true);
-        
-        try {
-            // Preparar itens para envio para API
-            const itensParaAPI = cartItems.map(item => ({
-                produtoId: item.id,
-                tamanho: item.tamanho,
-                quantidade: item.quantidade,
-                precoUnitario: parseFloat(item.preco.replace("R$", "").replace(",", "."))
-            }));
-
-            const response = await fetch(`${API_URL}/pedidos/calcular-frete`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    cep: cepDestino.replace(/\D/g, ''), // Limpar formatação
-                    itens: itensParaAPI
-                })
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                setValorFrete(result.valorFrete);
-            } else {
-                console.error('Erro ao calcular frete');
-                alert('Erro ao calcular frete. Verifique o CEP.');
-            }
-        } catch (error) {
-            console.error('Erro ao calcular frete:', error);
-            alert('Erro ao calcular frete. Tente novamente.');
-        } finally {
-            setCalculandoFrete(false);
-        }
-    };
-
-    const finalizarPedidoComAPI = async (dadosFormulario) => {
-        setProcessandoPedido(true);
-        
-        try {
-            // Preparar dados do pedido para API
-            const itensParaAPI = cartItems.map(item => ({
-                produtoId: item.id,
-                tamanho: item.tamanho,
-                quantidade: item.quantidade,
-                precoUnitario: parseFloat(item.preco.replace("R$", "").replace(",", "."))
-            }));
-
-            const pedidoData = {
-                clienteNome: dadosFormulario.nome,
-                clienteEmail: dadosFormulario.email,
-                clienteTelefone: dadosFormulario.telefone || '',
-                cep: dadosFormulario.cep ? dadosFormulario.cep.replace(/\D/g, '') : '',
-                endereco: dadosFormulario.rua ? 
-                    `${dadosFormulario.rua}, ${dadosFormulario.numero}${dadosFormulario.complemento ? ', ' + dadosFormulario.complemento : ''}` : 
-                    'Retirada no local',
-                cidade: dadosFormulario.cidade || '',
-                estado: dadosFormulario.estado || 'PE', // Você pode adicionar campo de estado no form
-                itens: itensParaAPI
-            };
-
-            console.log('Enviando pedido:', pedidoData);
-
-            const response = await fetch(`${API_URL}/pedidos`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include', // Para manter sessão
-                body: JSON.stringify(pedidoData)
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                console.log('Pedido criado:', result);
-                
-                // Redirecionar para Mercado Pago
-                if (result.urlPagamento) {
-                    window.location.href = result.urlPagamento;
-                } else {
-                    alert('Erro: URL de pagamento não retornada');
-                }
-            } else {
-                const error = await response.json();
-                console.error('Erro ao criar pedido:', error);
-                alert(`Erro ao criar pedido: ${error.erro || 'Erro desconhecido'}`);
-            }
-        } catch (error) {
-            console.error('Erro ao finalizar pedido:', error);
-            alert('Erro ao finalizar pedido. Tente novamente.');
-        } finally {
-            setProcessandoPedido(false);
-        }
-    };
-
-    const onSubmit = async (data) => {
-        await finalizarPedidoComAPI(data);
-    };
-
-    {/*const gerarMensagemWhatsApp = (data) => {
+    const gerarMensagemWhatsApp = (data) => {
         let mensagem = `🛍️ *NOVO PEDIDO*\n\n`;
         mensagem += `👤 *Dados do Cliente:*\n`;
         mensagem += `• Nome: ${data.nome}\n`;
@@ -158,6 +47,7 @@ const Shipping = () => {
         // Se for entrega, adicionar endereço
         if (data.opcaoEntrega === 'entrega') {
             mensagem += `🏠 *Endereço de Entrega:*\n`;
+            mensagem += `• CEP: ${data.cep}\n`;
             mensagem += `• Rua: ${data.rua}, ${data.numero}\n`;
             mensagem += `• Bairro: ${data.bairro}\n`;
             mensagem += `• Cidade: ${data.cidade}\n`;
@@ -189,13 +79,10 @@ const Shipping = () => {
 
     const onSubmit = async (data) => {
         const mensagem = gerarMensagemWhatsApp(data);
-
         const numeroWhatsApp = "558197146120";
-
         const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
-
         window.open(urlWhatsApp, '_blank');
-    };*/}
+    };
 
 
     const [isEditing, setIsEditing] = useState(true)
@@ -411,31 +298,6 @@ const Shipping = () => {
                                                                     />
                                                                 </div>
                                                             </section>
-                                                            {/*
-                                                            <section className='flex md:flex-col md:gap-2 w-full mt-2 gap-5 text-[#0D0D0D] font-grotesk'>
-                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={handleSubmit((data) => {
-                                                                            setFormData(data);
-
-                                                                            if (isEditing) {
-                                                                                // salvando os dados editados
-                                                                                console.log("Dados do cliente salvos:", data);
-                                                                                setIsEditing(false);
-                                                                            } else {
-                                                                                // entrando em modo de edição
-                                                                                setIsEditing(true);
-                                                                            }
-                                                                        })}
-                                                                        className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
-                                                                    >
-                                                                        {isEditing ? 'Salvar' : 'Editar'}
-                                                                    </button>
-
-                                                                </div>
-                                                            </section>
-                                                            */}
                                                         </>
                                                     )}
                                                     {opcaoEntrega === 'retirada' && (
@@ -485,23 +347,6 @@ const Shipping = () => {
 
                                                                 
                                                             </section>
-                                                            {/*
-                                                            <section className='flex md:flex-col md:gap-2 mt-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={handleSubmit((data) => {
-                                                                            onSubmit(data);
-                                                                            setFormData(data);
-                                                                            setIsEditing(false);
-                                                                        })}
-                                                                        className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
-                                                                    >
-                                                                        {isEditing ? 'Salvar' : 'Editar'}
-                                                                    </button>
-                                                                </div>
-                                                            </section>
-                                                            */}
                                                         </>
                                                     )}
                                                 </form>

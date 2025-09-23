@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { getProdutoPorSlug, secoesProdutos } from '../data/products';
 import { useCart } from '../context/CartProvider';
 
-const TamanhosDisponiveis = ['P', 'M', 'G', 'GG'];
+const TamanhosDisponiveis = ['P', 'M', 'G'];
 
 const Details = () => {
     const { slug } = useParams();
@@ -14,18 +14,39 @@ const Details = () => {
     const [tamanhoSelecionado, setTamanhoSelecionado] = useState('');
     const { addToCart } = useCart();
 
+    // Debug: verificar se secoesProdutos está definido
+    console.log('secoesProdutos:', secoesProdutos);
+    console.log('produto:', produto);
+    
+    // Se o produto não foi encontrado, retorna o componente de erro
+    if (!produto) {
+        return (
+            <main className='font-grotesk min-h-screen flex flex-col'>
+                <Header />
+                <section className='flex-grow mt-5 flex items-center justify-center'>
+                    <div className='text-center'>
+                        <h2 className='text-2xl font-bold text-gray-800'>Produto não encontrado</h2>
+                        <p className='text-gray-600 mt-2'>O produto que você está procurando não existe.</p>
+                    </div>
+                </section>
+                <Footer />
+            </main>
+        );
+    }
+
     // Verificar se o produto está na seção de últimos lançamentos
-    const isUltimosLancamentos = secoesProdutos.ultimosLancamentos.includes(produto?.id);
+    // Usando optional chaining para evitar erro se produto ou secoesProdutos for undefined
+    const isUltimosLancamentos = produto && secoesProdutos?.ultimosLancamentos?.includes(produto.id) || false;
 
     // Função para verificar se o tamanho está disponível
     const isTamanhoDisponivel = (tamanho) => {
-        if (!produto.tamanhosDisponiveis) return true;
+        if (!produto?.tamanhosDisponiveis) return true;
         return produto.tamanhosDisponiveis.includes(tamanho);
     };
 
     // Verificar se todos os tamanhos estão indisponíveis
     const todosTamanhosIndisponiveis = () => {
-        if (!produto.tamanhosDisponiveis) return false;
+        if (!produto?.tamanhosDisponiveis) return false;
         return TamanhosDisponiveis.every(tamanho => !isTamanhoDisponivel(tamanho));
     };
 
@@ -47,22 +68,6 @@ const Details = () => {
         }
     };
 
-    // Se o produto não foi encontrado
-    if (!produto) {
-        return (
-            <main className='font-grotesk min-h-screen flex flex-col'>
-                <Header />
-                <section className='flex-grow mt-5 flex items-center justify-center'>
-                    <div className='text-center'>
-                        <h2 className='text-2xl font-bold text-gray-800'>Produto não encontrado</h2>
-                        <p className='text-gray-600 mt-2'>O produto que você está procurando não existe.</p>
-                    </div>
-                </section>
-                <Footer />
-            </main>
-        );
-    }
-
     return (
         <main className='font-grotesk min-h-screen flex flex-col'>
             <Header />
@@ -71,7 +76,7 @@ const Details = () => {
                     <div className='flex flex-wrap justify-center gap-4'>
                         <div className='flex md:flex-col-reverse'>
                             <div className='flex flex-col gap-2 md:mr-5 md:justify-start mb-4 md:mb-0 mt-[1.25rem] md:flex-row'>
-                                {[produto.imagemFrente, produto.imagemCostas].map((img, i) => (
+                                {produto && [produto.imagemFrente, produto.imagemCostas].map((img, i) => (
                                     <img
                                         key={i}
                                         className={`w-[90px] h-[110px] object-cover cursor-pointer border ${imagemAtual === img ? 'border-[#F2A541]' : 'border-gray-200'
@@ -86,18 +91,18 @@ const Details = () => {
                                 <img
                                     className='h-[550px] w-full object-contain transition-all duration-300 md:justify-start'
                                     src={imagemAtual}
-                                    alt={produto.nome}
+                                    alt={produto?.nome}
                                 />
                             </div>
                         </div>
                         <div className='w-[30%] md:w-[100%] md:p-2 flex flex-col gap-5 ml-6 sm:ml-0 sm:mt-5'>
                             <div className='text-[#0D0D0D]'>
                                 <h3 className='text-3xl font-black relative inline-block p-1 after:block after:h-[2px] after:w-full after:bg-[#F2A541] after:mt-1'>
-                                    {produto.nome}
+                                    {produto?.nome}
                                 </h3>
                                 
                                 {/* Só mostra o preço se NÃO for últimos lançamentos */}
-                                {!isUltimosLancamentos && (
+                                {!isUltimosLancamentos && produto && (
                                     <h4 className='mt-5 text-lg font-semibold'>{produto.preco}</h4>
                                 )}
                             </div>
@@ -134,7 +139,7 @@ const Details = () => {
                             )}
 
                             <span className='text-base text-justify text-gray-600 font-grotesk'>
-                                {produto.descDetalhada}
+                                {produto?.descDetalhada}
                             </span>
 
                             {/* Botão de comprar - só aparece se NÃO for últimos lançamentos */}
