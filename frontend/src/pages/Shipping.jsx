@@ -178,7 +178,7 @@ const Shipping = () => {
                                                                         className={`w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
                                                                         name='telefone'
                                                                         id='telefone'
-                                                                        placeholder='(11) 91111-0000'
+                                                                        placeholder='11911110000'
                                                                         
                                                                     />
                                                                     {errors?.telefone?.type === 'required' && (
@@ -188,23 +188,6 @@ const Shipping = () => {
                                                                     {errors?.telefone?.type === 'pattern' && (
                                                                         <p className='text-[#ff4848] text-sm font-semibold'>Apenas números são permitidos</p>
                                                                     )}
-                                                                </div>
-                                                            </section>
-
-                                                            <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='name'>CEP</label>
-                                                                    <input
-                                                                        {...register('nome', { required: true, minLength: 1 })}
-                                                                        type='text'
-                                                                        className={`w-full px-3 py-2 rounded-md ${errors.nome ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
-                                                                        name='nome'
-                                                                        id='nome'
-                                                                        placeholder='Insira seu nome completo'
-                                                                    />
-                                                                    {errors?.nome?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>CEP é obrigatório</p>)}
-                                                                    {errors?.nome?.type === 'minLength' && (<p className='text-[#ff4848] text-sm font-semibold'>Insira um CEP</p>)}
-
                                                                 </div>
                                                             </section>
 

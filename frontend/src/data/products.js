@@ -7,7 +7,7 @@ const produtos = [
     id: 1,
     slug: 'regata-hellcife',
     nome: 'Regata Hellcife',
-    preco: 'R$ 89,90',
+    preco: 'R$ 85,00',
     imagemFrente: img1Front,
     imagemCostas: img1Back,
     descricao: 'Regata "Hellcife" com estampa frontal de tubarão, inspirada no calor e na cultura de Recife',
