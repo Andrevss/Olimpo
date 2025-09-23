@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { getProdutoPorSlug, secoesProdutos } from '../data/products';
 import { useCart } from '../context/CartProvider';
 
-const TamanhosDisponiveis = ['P', 'M', 'G'];
+const TamanhosDisponiveis = ['P', 'M', 'G', 'GG'];
 
 const Details = () => {
     const { slug } = useParams();
