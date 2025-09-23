@@ -13,20 +13,7 @@ const Shipping = () => {
     const { register, handleSubmit, setValue, formState: { errors }, watch, clearErrors } = useForm({
         shouldUnregister: true,
     });
-    const formatarTelefone = (value) => {
-        const numeroLimpo = value.replace(/\D/g, '');
-
-        if (numeroLimpo.length <= 2) {
-            return `(${numeroLimpo}`;
-        } else if (numeroLimpo.length <= 7) {
-            return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2)}`;
-        } else if (numeroLimpo.length <= 10) {
-            return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 6)}-${numeroLimpo.slice(6)}`;
-        } else {
-            return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 7)}-${numeroLimpo.slice(7, 11)}`;
-        }
-    };
-    const [telefoneDisplay, setTelefoneDisplay] = useState('');
+    
     const opcaoEntrega = watch('opcaoEntrega')
     useEffect(() => {
         clearErrors();
@@ -185,24 +172,14 @@ const Shipping = () => {
                                                                             required: true,
                                                                             minLength: 10,
                                                                             maxLength: 11,
-                                                                            pattern: /^[0-9]+$/
+                                                                            
                                                                         })}
                                                                         type='text'
                                                                         className={`w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
                                                                         name='telefone'
                                                                         id='telefone'
                                                                         placeholder='(11) 91111-0000'
-                                                                        value={telefoneDisplay}
-                                                                        onChange={(e) => {
-                                                                            const valorDigitado = e.target.value;
-                                                                            const valorFormatado = formatarTelefone(valorDigitado);
-                                                                            setTelefoneDisplay(valorFormatado);
-
-                                                                            // Atualiza o valor no react-hook-form apenas com números
-                                                                            const valorLimpo = valorDigitado.replace(/\D/g, '');
-                                                                            setValue('telefone', valorLimpo);
-                                                                        }}
-                                                                        maxLength={15}
+                                                                        
                                                                     />
                                                                     {errors?.telefone?.type === 'required' && (
                                                                         <p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>
