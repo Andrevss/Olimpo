@@ -10,7 +10,7 @@ import { IoIosArrowDown } from "react-icons/io";
 
 const Shipping = () => {
     
-    const { register, handleSubmit, setValue, formState: { errors }, watch, clearErrors } = useForm({
+    const { register, handleSubmit, formState: { errors }, watch, clearErrors } = useForm({
         shouldUnregister: true,
     });
     
