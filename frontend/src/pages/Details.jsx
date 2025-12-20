@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { useParams } from 'react-router-dom';
-import { getProdutoPorSlug, secoesProdutos } from '../data/products';
+import { getProdutoPorSlug } from '../data/products';
 import { useCart } from '../context/CartProvider';
 
 const TamanhosDisponiveis = ['P', 'M', 'G', 'GG'];
@@ -13,10 +13,6 @@ const Details = () => {
     const [imagemAtual, setImagemAtual] = useState(produto?.imagemFrente);
     const [tamanhoSelecionado, setTamanhoSelecionado] = useState('');
     const { addToCart } = useCart();
-
-    // Debug: verificar se secoesProdutos está definido
-    console.log('secoesProdutos:', secoesProdutos);
-    console.log('produto:', produto);
     
     // Se o produto não foi encontrado, retorna o componente de erro
     if (!produto) {
@@ -34,10 +30,6 @@ const Details = () => {
         );
     }
 
-    // Verificar se o produto está na seção de últimos lançamentos
-    // Usando optional chaining para evitar erro se produto ou secoesProdutos for undefined
-    const isUltimosLancamentos = produto && secoesProdutos?.ultimosLancamentos?.includes(produto.id) || false;
-
     // Função para verificar se o tamanho está disponível
     const isTamanhoDisponivel = (tamanho) => {
         if (!produto?.tamanhosDisponiveis) return true;
@@ -51,8 +43,8 @@ const Details = () => {
     };
 
     const handleAdicionarAoCarrinho = () => {
-        if (isUltimosLancamentos || todosTamanhosIndisponiveis()) {
-            return; // Não permite adicionar se for últimos lançamentos ou se todos tamanhos estão indisponíveis
+        if (todosTamanhosIndisponiveis()) {
+            return; // Não permite adicionar se todos tamanhos estão indisponíveis
         }
         
         if (!tamanhoSelecionado) {
@@ -63,7 +55,7 @@ const Details = () => {
     };
 
     const handleSelecionarTamanho = (tamanho) => {
-        if (isTamanhoDisponivel(tamanho) && !isUltimosLancamentos) {
+        if (isTamanhoDisponivel(tamanho)) {
             setTamanhoSelecionado(tamanho);
         }
     };
@@ -101,63 +93,59 @@ const Details = () => {
                                     {produto?.nome}
                                 </h3>
                                 
-                                {/* Só mostra o preço se NÃO for últimos lançamentos */}
-                                {!isUltimosLancamentos && produto && (
+                                {/* Preço sempre visível */}
+                                {produto && (
                                     <h4 className='mt-5 text-lg font-semibold'>{produto.preco}</h4>
                                 )}
                             </div>
 
-                            {/* Seção de tamanhos - só aparece se NÃO for últimos lançamentos */}
-                            {!isUltimosLancamentos && (
-                                <div className="mb-2">
-                                    <span className="font-semibold text-gray-800">Tamanho:</span>
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                        {TamanhosDisponiveis.map((t) => {
-                                            const disponivel = isTamanhoDisponivel(t);
-                                            return (
-                                                <button
-                                                    key={t}
-                                                    onClick={() => handleSelecionarTamanho(t)}
-                                                    disabled={!disponivel}
-                                                    className={`
-                                                        w-10 h-8 flex items-center justify-center 
-                                                        rounded border transition-all text-sm font-semibold
-                                                        ${!disponivel 
-                                                            ? 'bg-gray-300 text-gray-500 border-gray-300 cursor-not-allowed opacity-50' 
-                                                            : tamanhoSelecionado === t
-                                                                ? 'bg-[#F2A541] text-white border-white'
-                                                                : 'bg-white text-black border-gray-300 hover:border-[#F2A541] cursor-pointer'
-                                                        }
-                                                    `}
-                                                >
-                                                    {t}
-                                                </button>
-                                            )
-                                        })}
-                                    </div>
+                            {/* Seção de tamanhos - sempre visível */}
+                            <div className="mb-2">
+                                <span className="font-semibold text-gray-800">Tamanho:</span>
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                    {TamanhosDisponiveis.map((t) => {
+                                        const disponivel = isTamanhoDisponivel(t);
+                                        return (
+                                            <button
+                                                key={t}
+                                                onClick={() => handleSelecionarTamanho(t)}
+                                                disabled={!disponivel}
+                                                className={`
+                                                    w-10 h-8 flex items-center justify-center 
+                                                    rounded border transition-all text-sm font-semibold
+                                                    ${!disponivel 
+                                                        ? 'bg-gray-300 text-gray-500 border-gray-300 cursor-not-allowed opacity-50' 
+                                                        : tamanhoSelecionado === t
+                                                            ? 'bg-[#F2A541] text-white border-white'
+                                                            : 'bg-white text-black border-gray-300 hover:border-[#F2A541] cursor-pointer'
+                                                    }
+                                                `}
+                                            >
+                                                {t}
+                                            </button>
+                                        )
+                                    })}
                                 </div>
-                            )}
+                            </div>
 
                             <span className='text-base text-justify text-gray-600 font-grotesk'>
                                 {produto?.descDetalhada}
                             </span>
 
-                            {/* Botão de comprar - só aparece se NÃO for últimos lançamentos */}
-                            {!isUltimosLancamentos && (
-                                <button
-                                    onClick={handleAdicionarAoCarrinho}
-                                    disabled={todosTamanhosIndisponiveis()}
-                                    className={`
-                                        font-bold py-2 px-6 rounded md:mb-5 
-                                        ${todosTamanhosIndisponiveis()
-                                            ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
-                                            : 'bg-[#F2A541] hover:bg-orange-500 text-white'
-                                        }
-                                    `}
-                                >
-                                    {todosTamanhosIndisponiveis() ? 'PRODUTO INDISPONÍVEL' : 'COMPRAR'}
-                                </button>
-                            )}
+                            {/* Botão de comprar - sempre visível */}
+                            <button
+                                onClick={handleAdicionarAoCarrinho}
+                                disabled={todosTamanhosIndisponiveis()}
+                                className={`
+                                    font-bold py-2 px-6 rounded md:mb-5 
+                                    ${todosTamanhosIndisponiveis()
+                                        ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+                                        : 'bg-[#F2A541] hover:bg-orange-500 text-white'
+                                    }
+                                `}
+                            >
+                                {todosTamanhosIndisponiveis() ? 'PRODUTO INDISPONÍVEL' : 'COMPRAR'}
+                            </button>
                         </div>
                     </div>
                 </div>

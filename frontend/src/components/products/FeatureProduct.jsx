@@ -41,7 +41,7 @@ const FeatureProduct = () => {
             </div>
 
             {listaProdutos.map((produto, i) => (
-                <div key={`${titulo}-${i}`} className="flex flex-col items-center w-[280px] sm:w-[320px] md:w-[350px]">
+                <div key={`${titulo}-${i}`} className="flex flex-col items-center w-[280px] sm:w-[320px] md:w-[350px] ml-4">
                     <div className='relative group w-full h-auto overflow-hidden'>
                         <img
                             onClick={() => navigate(`/product/${produto.slug}`)}
@@ -117,13 +117,15 @@ const FeatureProduct = () => {
     return (
         <>
             <main className='w-[95%] flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 mx-auto'>
-                {/* Seção Nossos Produtos */}
-                {renderSecaoProdutos(getProdutosPorIds(secoesProdutos.nossosProdutos), "Nossos Produtos")}
+                {/* Seção para ser usada quando tivermos uma variedade maior de produtos */}
+                {renderSecaoProdutos(getProdutosPorIds(secoesProdutos.ultimosLancamentos), "Coleção de fim de ano")}
 
                 <div className='w-full h-8'></div>
 
-                {/* Seção para ser usada quando tivermos uma variedade maior de produtos */}
-                {/*renderSecaoProdutos(getProdutosPorIds(secoesProdutos.ultimosLancamentos), "Últimos Lançamentos")*/}
+                {/* Seção Nossos Produtos */}
+                {renderSecaoProdutos(getProdutosPorIds(secoesProdutos.nossosProdutos), "Nossos Produtos")}
+
+                
             </main>
 
             {showPopup && addedProduct && (

@@ -5,15 +5,14 @@ import { useCart } from '../context/CartProvider';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { FaTrashAlt } from "react-icons/fa";
-import imgFrente from '../assets/Images/products/1.png'
 import { IoIosArrowDown } from "react-icons/io";
 
 const Shipping = () => {
-    
+
     const { register, handleSubmit, formState: { errors }, watch, clearErrors } = useForm({
         shouldUnregister: true,
     });
-    
+
     const opcaoEntrega = watch('opcaoEntrega')
     useEffect(() => {
         clearErrors();
@@ -75,7 +74,6 @@ const Shipping = () => {
     const [isEditing, setIsEditing] = useState(true)
     const [formData] = useState({});
     const { cartItems, decreaseQuantity, increaseQuantity, removeFromCart } = useCart();
-
     const totalItens = cartItems.reduce((acc, item) => acc + item.quantidade, 0);
     const totalGeral = cartItems.reduce((acc, item) => {
         const preco = parseFloat(item.preco.replace("R$", "").replace(",", "."));
@@ -172,19 +170,19 @@ const Shipping = () => {
                                                                             required: true,
                                                                             minLength: 10,
                                                                             maxLength: 11,
-                                                                            
+
                                                                         })}
                                                                         type='text'
                                                                         className={`w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
                                                                         name='telefone'
                                                                         id='telefone'
                                                                         placeholder='11911110000'
-                                                                        
+
                                                                     />
                                                                     {errors?.telefone?.type === 'required' && (
                                                                         <p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>
                                                                     )}
-                                                                    
+
                                                                     {errors?.telefone?.type === 'pattern' && (
                                                                         <p className='text-[#ff4848] text-sm font-semibold'>Apenas números são permitidos</p>
                                                                     )}
@@ -305,7 +303,7 @@ const Shipping = () => {
                                                                     )}
                                                                 </div>
 
-                                                                
+
                                                             </section>
                                                         </>
                                                     )}
@@ -478,60 +476,63 @@ const Shipping = () => {
                             <div className='w-full flex flex-wrap'>
                                 <div className='w-[67%] md-lg:w-full'>
                                     <div className='flex flex-col gap-3'>
-                                        {cartItems.map((item, index) => (
-                                            <div key={index} className='bg-white p-10 shadow-sm rounded-md'>
-                                                <div className="flex justify-between items-center pb-3">
-                                                    <h2 className='text-[#0D0D0D] text-lg font-bold font-grotesk'>Informações da Compra</h2>
+                                        {cartItems.map((item, index) => {
 
-                                                    {/* Ícone visível no desktop */}
-                                                    <span
-                                                        onClick={() => removeFromCart(item.id, item.tamanho)}
-                                                        className='hidden md:inline text-red-600 font-semibold cursor-pointer'
-                                                    >
-                                                        <FaTrashAlt />
-                                                    </span>
-                                                </div>
+                                            return (
+                                                <div key={index} className='bg-white p-10 shadow-sm rounded-md'>
+                                                    <div className="flex justify-between items-center pb-3">
+                                                        <h2 className='text-[#0D0D0D] text-lg font-bold font-grotesk'>Informações da Compra</h2>
 
-                                                <div className="flex justify-between items-center w-full md:flex-col">
-                                                    <div className="flex items-center md:flex-col">
-                                                        <img
-                                                            src={imgFrente}
-                                                            alt={item.nome}
-                                                            className="w-[150px]"
-                                                        />
+                                                        {/* Ícone visível no desktop */}
+                                                        <span
+                                                            onClick={() => removeFromCart(item.id, item.tamanho)}
+                                                            className='hidden md:inline text-red-600 font-semibold cursor-pointer'
+                                                        >
+                                                            <FaTrashAlt />
+                                                        </span>
+                                                    </div>
 
-                                                        <li className="flex flex-col justify-center gap-2 font-grotesk">
-                                                            <strong>{item.nome} | Tamanho: {item.tamanho}</strong>
-                                                            {item.preco}
+                                                    <div className="flex justify-between items-center w-full md:flex-col">
+                                                        <div className="flex items-center md:flex-col gap-4">
+                                                            <img
+                                                                src={item.imagemFrente}
+                                                                alt={item.nome}
+                                                                className="w-[150px]"
+                                                            />
 
-                                                            {/* Link "Remover" visível apenas no mobile */}
-                                                            <span
-                                                                onClick={() => removeFromCart(item.id, item.tamanho)}
-                                                                className="md:hidden text-sm text-red-600 font-semibold cursor-pointer hover:underline mt-4"
+                                                            <li className="flex flex-col justify-center gap-2 font-grotesk">
+                                                                <strong>{item.nome} | Tamanho: {item.tamanho}</strong>
+                                                                {item.preco}
+
+                                                                {/* Link "Remover" visível apenas no mobile */}
+                                                                <span
+                                                                    onClick={() => removeFromCart(item.id, item.tamanho)}
+                                                                    className="md:hidden text-sm text-red-600 font-semibold cursor-pointer hover:underline mt-4"
+                                                                >
+                                                                    Remover
+                                                                </span>
+                                                            </li>
+                                                        </div>
+
+                                                        <div className="flex items-center gap-2 cursor-pointer md:mt-3 md:justify-between">
+                                                            <button
+                                                                onClick={() => decreaseQuantity(item.id, item.tamanho)}
+                                                                className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
                                                             >
-                                                                Remover
-                                                            </span>
-                                                        </li>
-                                                    </div>
-
-                                                    <div className="flex items-center gap-2 cursor-pointer md:mt-3 md:justify-between">
-                                                        <button
-                                                            onClick={() => decreaseQuantity(item.id, item.tamanho)}
-                                                            className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
-                                                        >
-                                                            -
-                                                        </button>
-                                                        <span className="font-semibold w-6 text-center">{item.quantidade}</span>
-                                                        <button
-                                                            onClick={() => increaseQuantity(item.id, item.tamanho)}
-                                                            className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
-                                                        >
-                                                            +
-                                                        </button>
+                                                                -
+                                                            </button>
+                                                            <span className="font-semibold w-6 text-center">{item.quantidade}</span>
+                                                            <button
+                                                                onClick={() => increaseQuantity(item.id, item.tamanho)}
+                                                                className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
+                                                            >
+                                                                +
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>
