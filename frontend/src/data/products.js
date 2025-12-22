@@ -16,7 +16,7 @@ const produtos = [
     imagemCostas: img1Back,
     descricao: 'Regata "Hellcife" com estampa frontal de tubarão, inspirada no calor e na cultura de Recife',
     descDetalhada: 'Esta regata carrega referências regionais marcantes da cidade do Recife. O nome "Hellcife" faz alusão ao calor característico da região, enquanto a estampa frontal traz o tubarão, símbolo emblemático das praias recifenses. Um item que une estilo, identidade e cultura local em uma peça única de streetwear.',
-    tamanhosDisponiveis: ['P']
+    tamanhosDisponiveis: []
   },
   {
     id: 2,
@@ -38,7 +38,7 @@ const produtos = [
     imagemCostas: r10Back,
     descricao: 'Camisa Oversized “Ronaldinho Gaúcho”, celebrando a arte e a conexão da OLIMPO com o esporte e a cultura de rua.',
     descDetalhada: 'Inspirada na genialidade de Ronaldinho Gaúcho, esta camisa representa a liberdade criativa, o improviso e a alegria que o esporte carrega. Sem seguir uma referência específica, a peça nasce do encontro entre futebol, rua e estilo urbano, traduzindo a essência de um dos maiores ícones do esporte mundial em uma peça de moda autêntica e cheia de personalidade.',
-    tamanhosDisponiveis: ['P', 'M', 'G', 'GG']
+    tamanhosDisponiveis: ['P', 'M', 'G']
   },
 ];
 
