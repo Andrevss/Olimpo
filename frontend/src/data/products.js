@@ -27,7 +27,7 @@ const produtos = [
     imagemCostas: panteraBack,
     descricao: 'Camisa Oversized “Pantera Negra”, símbolo de força, identidade e resistência, relançada com uma nova abordagem visual.',
     descDetalhada: 'A Pantera Negra retorna em uma versão ainda mais original e carregada de significado. Mais do que estética, essa camisa carrega a ideia de que moda também é resistência e uma forma de expressão, afirmação e orgulho. Pensada para quem entende que vestir é comunicar, a Oversized Pantera Negra traduz atitude, identidade e presença em cada detalhe.',
-    tamanhosDisponiveis: [, 'M', 'G', 'GG']
+    tamanhosDisponiveis: ['M', 'G']
   },
   {
     id: 3,
