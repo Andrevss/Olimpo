@@ -4,7 +4,7 @@ Um e-commerce moderno e responsivo desenvolvido em React, especializado em produ
 
 ## Demonstração
 
-[https://olimpo-andrevss.vercel.app]
+[https://olimpo081.vercel.app/]
 
 ## Funcionalidades
 
