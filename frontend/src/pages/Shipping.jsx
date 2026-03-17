@@ -9,23 +9,67 @@ import { IoIosArrowDown } from "react-icons/io";
 
 const Shipping = () => {
 
-    const { register, handleSubmit, formState: { errors }, watch, clearErrors } = useForm({
+    const { register, handleSubmit, setValue, formState: { errors }, watch, clearErrors } = useForm({
         shouldUnregister: true,
     });
 
-    const opcaoEntrega = watch('opcaoEntrega')
+    const formatarTelefone = (value) => {
+        const numeroLimpo = value.replace(/\D/g, '').slice(0, 11);
+
+        if (numeroLimpo.length === 0) return '';
+        if (numeroLimpo.length <= 2) return `(${numeroLimpo}`;
+        if (numeroLimpo.length <= 3) return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2)}`;
+        if (numeroLimpo.length <= 7) return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 3)} ${numeroLimpo.slice(3)}`;
+        return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 3)} ${numeroLimpo.slice(3, 7)}-${numeroLimpo.slice(7, 11)}`;
+    };
+
+    const transformarTelefoneParaInternacional = (value) => {
+        const digits = (value || '').replace(/\D/g, '');
+        if (digits.length !== 11) return '';
+        return `+55${digits}`;
+    };
+
+    const formatarCEP = (value) => {
+        const numeroLimpo = value.replace(/\D/g, '');
+        if (numeroLimpo.length > 5) {
+            return `${numeroLimpo.slice(0, 5)}-${numeroLimpo.slice(5, 8)}`;
+        }
+        return numeroLimpo;
+    };
+
+    const buscarEnderecoPorCEP = async (cep) => {
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const data = await response.json();
+            if (!data.erro) {
+                setValue('rua', data.logradouro || '');
+                setValue('bairro', data.bairro || '');
+                setValue('cidade', data.localidade || '');
+                setValue('estado', (data.uf || '').toUpperCase());
+            }
+        } catch (error) {
+            console.error('Erro ao buscar CEP:', error);
+        }
+    };
+
+
+
+    const opcaoEntrega = watch('opcaoEntrega');
+    
     useEffect(() => {
         clearErrors();
-    }, [opcaoEntrega, clearErrors]);
-
-    console.log({ errors })
+        setValue('nome', '');
+        setValue('email', '');
+        setValue('telefone', '');
+    }, [opcaoEntrega, clearErrors, setValue]);
 
     const gerarMensagemWhatsApp = (data) => {
+        const telefoneInternacional = transformarTelefoneParaInternacional(data.telefone);
         let mensagem = `🛍️ *NOVO PEDIDO*\n\n`;
         mensagem += `👤 *Dados do Cliente:*\n`;
         mensagem += `• Nome: ${data.nome}\n`;
         mensagem += `• Email: ${data.email}\n`;
-        mensagem += `• Telefone: ${data.telefone || 'Não informado'}\n\n`;
+        mensagem += `• Telefone: ${telefoneInternacional || data.telefone || 'Não informado'}\n\n`;
 
         // Opção de entrega
         mensagem += `📦 *Entrega:* ${data.opcaoEntrega === 'entrega' ? 'Delivery' : 'Retirada no local'}\n\n`;
@@ -37,6 +81,7 @@ const Shipping = () => {
             mensagem += `• Rua: ${data.rua}, ${data.numero}\n`;
             mensagem += `• Bairro: ${data.bairro}\n`;
             mensagem += `• Cidade: ${data.cidade}\n`;
+            mensagem += `• Estado: ${data.estado}\n`;
             if (data.complemento) {
                 mensagem += `• Complemento: ${data.complemento}\n`;
             }
@@ -123,7 +168,7 @@ const Shipping = () => {
                                                         <>
                                                             <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='name'>Nome Completo</label>
+                                                                    <label htmlFor='name'>Nome Completo <span className='text-[#ff4848]'>*</span></label>
                                                                     <input
                                                                         {...register('nome', { required: true, minLength: 1 })}
                                                                         type='text'
@@ -140,12 +185,12 @@ const Shipping = () => {
 
                                                             <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='email'>Email</label>
+                                                                    <label htmlFor='email'>Email <span className='text-[#ff4848]'>*</span></label>
                                                                     <input
                                                                         {...register('email', {
                                                                             required: true,
                                                                             pattern: {
-                                                                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Regex básico de e-mail
+                                                                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                                                                                 message: 'Formato de e-mail inválido',
                                                                             },
                                                                         })}
@@ -164,34 +209,72 @@ const Shipping = () => {
                                                                 </div>
 
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='telefone'>Telefone</label>
+                                                                    <label htmlFor='telefone'>Telefone <span className='text-[#ff4848]'>*</span></label>
                                                                     <input
                                                                         {...register('telefone', {
                                                                             required: true,
-                                                                            minLength: 10,
-                                                                            maxLength: 11,
-
+                                                                            validate: (value) => {
+                                                                                const internacional = transformarTelefoneParaInternacional(value);
+                                                                                return /^\+[1-9]\d{10,14}$/.test(internacional) || 'Telefone inválido. Use o formato (xx) 9 xxxx-xxxx';
+                                                                            }
                                                                         })}
                                                                         type='text'
                                                                         className={`w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
                                                                         name='telefone'
                                                                         id='telefone'
-                                                                        placeholder='11911110000'
-
+                                                                        placeholder='(11) 9 1111-0000'
+                                                                        onChange={(e) => {
+                                                                            const valorFormatado = formatarTelefone(e.target.value);
+                                                                            setValue('telefone', valorFormatado, { shouldValidate: false });
+                                                                            e.target.value = valorFormatado;
+                                                                        }}
+                                                                        maxLength={16}
                                                                     />
                                                                     {errors?.telefone?.type === 'required' && (
                                                                         <p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>
                                                                     )}
-
-                                                                    {errors?.telefone?.type === 'pattern' && (
-                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Apenas números são permitidos</p>
+                                                                    {errors?.telefone?.type === 'validate' && (
+                                                                        <p className='text-[#ff4848] text-sm font-semibold'>{errors.telefone.message}</p>
                                                                     )}
                                                                 </div>
                                                             </section>
 
                                                             <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='rua'>Rua</label>
+                                                                    <label htmlFor='cep'>CEP <span className='text-[#ff4848]'>*</span></label>
+                                                                    <input
+                                                                        {...register('cep', { 
+                                                                            required: true,
+                                                                            validate: (value) => {
+                                                                                const digits = value?.replace(/\D/g, '') || '';
+                                                                                return digits.length === 8 || 'CEP deve ter 8 dígitos';
+                                                                            }
+                                                                        })}
+                                                                        type='text'
+                                                                        className={`w-full px-3 py-2 rounded-md ${errors.cep ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                        name='cep'
+                                                                        id='cep'
+                                                                        placeholder='00000-000'
+                                                                        onChange={(e) => {
+                                                                            const valorFormatado = formatarCEP(e.target.value);
+                                                                            setValue('cep', valorFormatado, { shouldValidate: false });
+                                                                            e.target.value = valorFormatado;
+
+                                                                            const digits = valorFormatado.replace(/\D/g, '');
+                                                                            if (digits.length === 8) {
+                                                                                buscarEnderecoPorCEP(digits);
+                                                                            }
+                                                                        }}
+                                                                        maxLength={9}
+                                                                    />
+                                                                    {errors?.cep?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>CEP é obrigatório</p>)}
+                                                                    {errors?.cep?.type === 'validate' && (<p className='text-[#ff4848] text-sm font-semibold'>CEP deve ter 8 dígitos</p>)}
+                                                                </div>
+                                                            </section>
+
+                                                            <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                    <label htmlFor='rua'>Rua <span className='text-[#ff4848]'>*</span></label>
                                                                     <input
                                                                         {...register('rua', { required: true })}
                                                                         type='text'
@@ -203,7 +286,7 @@ const Shipping = () => {
                                                                     {errors?.rua?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>Rua é obrigatório</p>)}
                                                                 </div>
                                                                 <div className='flex flex-col gap-1 mb-2'>
-                                                                    <label htmlFor='numero'>Número</label>
+                                                                    <label htmlFor='numero'>Número <span className='text-[#ff4848]'>*</span></label>
                                                                     <input
                                                                         {...register('numero', { required: true })}
                                                                         type='number'
@@ -214,11 +297,11 @@ const Shipping = () => {
                                                                     />
                                                                     {errors?.numero?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>Número é obrigatório</p>)}
                                                                 </div>
-
                                                             </section>
+
                                                             <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='bairro'>Bairro</label>
+                                                                    <label htmlFor='bairro'>Bairro <span className='text-[#ff4848]'>*</span></label>
                                                                     <input
                                                                         {...register('bairro', { required: true })}
                                                                         type='text'
@@ -230,7 +313,7 @@ const Shipping = () => {
                                                                     {errors?.bairro?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>Bairro é obrigatório</p>)}
                                                                 </div>
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='cidade'>Cidade</label>
+                                                                    <label htmlFor='cidade'>Cidade <span className='text-[#ff4848]'>*</span></label>
                                                                     <input
                                                                         {...register('cidade', { required: true })}
                                                                         type='text'
@@ -239,11 +322,29 @@ const Shipping = () => {
                                                                         id='cidade'
                                                                         placeholder='Insira sua Cidade'
                                                                     />
-                                                                    {errors?.cidade?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>Cidade é obrigatório</p>)}
+                                                                    {errors?.cidade?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>Cidade é obrigatória</p>)}
                                                                 </div>
                                                             </section>
 
                                                             <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                    <label htmlFor='estado'>Estado <span className='text-[#ff4848]'>*</span></label>
+                                                                    <input
+                                                                        {...register('estado', { required: true })}
+                                                                        type='text'
+                                                                        className={`w-full px-3 py-2 rounded-md ${errors.estado ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                        name='estado'
+                                                                        id='estado'
+                                                                        placeholder='Ex: PE'
+                                                                        maxLength={2}
+                                                                        onChange={(e) => {
+                                                                            const valor = e.target.value.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase();
+                                                                            setValue('estado', valor, { shouldValidate: false });
+                                                                            e.target.value = valor;
+                                                                        }}
+                                                                    />
+                                                                    {errors?.estado?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>Estado é obrigatório</p>)}
+                                                                </div>
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
                                                                     <label htmlFor='complemento'>Complemento</label>
                                                                     <input
@@ -252,7 +353,7 @@ const Shipping = () => {
                                                                         className={`w-full px-3 py-2 rounded-md border border-slate-200`}
                                                                         name='complemento'
                                                                         id='complemento'
-                                                                        placeholder='Insira detalhes adicionais a sua entrega'
+                                                                        placeholder='Insira detalhes adicionais'
                                                                     />
                                                                 </div>
                                                             </section>
@@ -263,7 +364,7 @@ const Shipping = () => {
                                                             <p className="text-sm italic text-justify text-gray-600 font-grotesk mb-2">*Retirada será feita em ponto físico após confirmação do pedido. Em caso de dúvidas, consulte nossa <Link to="/Politicas" className='italic underline'><strong>política de frete</strong></Link>.</p>
                                                             <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='name'>Nome Completo</label>
+                                                                    <label htmlFor='name'>Nome Completo <span className='text-[#ff4848]'>*</span></label>
                                                                     <input
                                                                         {...register('nome', { required: true, minLength: 1 })}
                                                                         type='text'
@@ -280,12 +381,12 @@ const Shipping = () => {
 
                                                             <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
                                                                 <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='email'>Email</label>
+                                                                    <label htmlFor='email'>Email <span className='text-[#ff4848]'>*</span></label>
                                                                     <input
                                                                         {...register('email', {
                                                                             required: true,
                                                                             pattern: {
-                                                                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Regex básico de e-mail
+                                                                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                                                                                 message: 'Formato de e-mail inválido',
                                                                             },
                                                                         })}
@@ -303,8 +404,53 @@ const Shipping = () => {
                                                                     )}
                                                                 </div>
 
-
+                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                    <label htmlFor='telefone'>Telefone <span className='text-[#ff4848]'>*</span></label>
+                                                                    <input
+                                                                        {...register('telefone', {
+                                                                            required: true,
+                                                                            validate: (value) => {
+                                                                                const internacional = transformarTelefoneParaInternacional(value);
+                                                                                return /^\+[1-9]\d{10,14}$/.test(internacional) || 'Telefone inválido. Use o formato (xx) 9 xxxx-xxxx';
+                                                                            }
+                                                                        })}
+                                                                        type='text'
+                                                                        className={`w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
+                                                                        name='telefone'
+                                                                        id='telefone'
+                                                                        placeholder='(11) 9 1111-0000'
+                                                                        onChange={(e) => {
+                                                                            const valorFormatado = formatarTelefone(e.target.value);
+                                                                            setValue('telefone', valorFormatado, { shouldValidate: false });
+                                                                            e.target.value = valorFormatado;
+                                                                        }}
+                                                                        maxLength={16}
+                                                                    />
+                                                                    {errors?.telefone?.type === 'required' && (
+                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>
+                                                                    )}
+                                                                    {errors?.telefone?.type === 'validate' && (
+                                                                        <p className='text-[#ff4848] text-sm font-semibold'>{errors.telefone.message}</p>
+                                                                    )}
+                                                                </div>
                                                             </section>
+                                                            {/*
+                                                            <section className='flex md:flex-col md:gap-2 mt-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
+                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={handleSubmit((data) => {
+                                                                            onSubmit(data);
+                                                                            setFormData(data);
+                                                                            setIsEditing(false);
+                                                                        })}
+                                                                        className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
+                                                                    >
+                                                                        {isEditing ? 'Salvar' : 'Editar'}
+                                                                    </button>
+                                                                </div>
+                                                            </section>
+                                                            */}
                                                         </>
                                                     )}
                                                 </form>
@@ -380,6 +526,10 @@ const Shipping = () => {
                                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                                 <label className="font-bold">Cidade</label>
                                                                 <p className="">{formData.cidade}</p>
+                                                            </div>
+                                                            <div className='flex flex-col gap-1 mb-2 w-full'>
+                                                                <label className="font-bold">Estado</label>
+                                                                <p>{formData.estado}</p>
                                                             </div>
                                                             <div className='flex flex-col gap-1 mb-2 w-full'>
                                                                 <label className="font-bold">Número</label>

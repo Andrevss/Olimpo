@@ -21,6 +21,18 @@ const FeatureProduct = () => {
         return produto.tamanhosDisponiveis.includes(tamanho);
     };
 
+    const isProdutoSemEstoque = (produto) => {
+        if (typeof produto.estoque === 'number') {
+            return produto.estoque <= 0;
+        }
+
+        if (Array.isArray(produto.tamanhosDisponiveis)) {
+            return produto.tamanhosDisponiveis.length === 0;
+        }
+
+        return false;
+    };
+
     const mostrarPopupConfirmacao = (produto, tamanho) => {
         setAddedProduct({ ...produto, tamanho });
         setShowPopup(true);
@@ -42,6 +54,10 @@ const FeatureProduct = () => {
 
             {listaProdutos.map((produto, i) => (
                 <div key={`${titulo}-${i}`} className="flex flex-col items-center w-[280px] sm:w-[320px] md:w-[350px] ml-4">
+                    {/** Produto sem estoque: carrinho cinza e sem clique */}
+                    {(() => {
+                        const produtoSemEstoque = isProdutoSemEstoque(produto);
+                        return (
                     <div className='relative group w-full h-auto overflow-hidden'>
                         <img
                             onClick={() => navigate(`/product/${produto.slug}`)}
@@ -56,9 +72,19 @@ const FeatureProduct = () => {
                             alt=''
                         />
 
+                        {produtoSemEstoque && (
+                            <span className='absolute top-3 left-3 bg-gray-700/90 text-white text-[11px] sm:text-xs font-semibold px-2 py-1 rounded'>
+                                Produto indisponível
+                            </span>
+                        )}
+
                         <ul className='flex justify-center items-center gap-2 absolute bottom-[-40px] left-1/2 transform -translate-x-1/2 opacity-0 transition-all duration-700 group-hover:bottom-3 group-hover:opacity-100'>
-                            <li className='w-[32px] h-[32px] sm:w-[38px] sm:h-[38px] cursor-pointer bg-white flex justify-center items-center rounded-full hover:bg-[#F2A541] hover:text-white hover:rotate-[720deg] transition-all'
+                            <li className={`w-[32px] h-[32px] sm:w-[38px] sm:h-[38px] flex justify-center items-center rounded-full transition-all ${produtoSemEstoque ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'cursor-pointer bg-white hover:bg-[#F2A541] hover:text-white hover:rotate-[720deg]'}`}
                                 onClick={() => {
+                                    if (produtoSemEstoque) {
+                                        return;
+                                    }
+
                                     const tamanhoSelecionado = sizeOption[produto.id];
                                     if (!tamanhoSelecionado) {
                                         alert("Selecione um tamanho antes de adicionar ao carrinho.");
@@ -74,8 +100,9 @@ const FeatureProduct = () => {
                                 <select
                                     id='sizeOption'
                                     name='sizeOption'
-                                    className='w-[40px] h-[26px] sm:w-[46px] sm:h-[30px] appearance-none bg-white border rounded-lg text-xs sm:text-sm font-grotesk text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#F2A541] focus:border-transparent pr-5'
+                                    className={`w-[40px] h-[26px] sm:w-[46px] sm:h-[30px] appearance-none border rounded-lg text-xs sm:text-sm font-grotesk text-center pr-5 ${produtoSemEstoque ? 'bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed' : 'bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#F2A541] focus:border-transparent'}`}
                                     value={sizeOption[produto.id] || ''}
+                                    disabled={produtoSemEstoque}
                                     onChange={(e) => setSizeOption(prev => ({
                                         ...prev,
                                         [produto.id]: e.target.value
@@ -104,6 +131,8 @@ const FeatureProduct = () => {
                             </li>
                         </ul>
                     </div>
+                        );
+                    })()}
 
                     <div className='text-center mt-2'>
                         <h2 className='text-lg sm:text-xl md:text-2xl font-grotesk text-[#1C1C1C] font-semibold capitalize'>{produto.nome}</h2>
