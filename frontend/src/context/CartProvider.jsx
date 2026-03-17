@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { getProdutoPorId } from '../data/products';
 
 export const CartContext = createContext();
 
@@ -6,14 +7,33 @@ export const CartProvider = ({ children }) => {
 
     const [cartItems, setCartItem] = useState(() => {
         const savedCart = localStorage.getItem('cart');
-        return savedCart ? JSON.parse(savedCart) : [];
+        if (savedCart) {
+            const parsedCart = JSON.parse(savedCart);
+            // Reconstrói os itens do carrinho com os dados completos dos produtos
+            return parsedCart.map(item => {
+                const produto = getProdutoPorId(item.id);
+                return {
+                    ...produto,
+                    tamanho: item.tamanho,
+                    quantidade: item.quantidade
+                };
+            });
+        }
+        return [];
     });
 
     useEffect(() => {
-        localStorage.setItem('cart', JSON.stringify(cartItems));
+        // Salva apenas id, tamanho e quantidade no localStorage
+        const cartToSave = cartItems.map(item => ({
+            id: item.id,
+            tamanho: item.tamanho,
+            quantidade: item.quantidade
+        }));
+        localStorage.setItem('cart', JSON.stringify(cartToSave));
     }, [cartItems]);
 
     const addToCart = (produto, tamanho) => {
+        
         setCartItem((prevItems) => {
             const existingItem = prevItems.find(
                 item => item.id === produto.id && item.tamanho === tamanho

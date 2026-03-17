@@ -5,167 +5,80 @@ import { useCart } from '../context/CartProvider';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { FaTrashAlt } from "react-icons/fa";
-import imgFrente from '../assets/Images/products/1.png'
 import { IoIosArrowDown } from "react-icons/io";
 
 const Shipping = () => {
 
-    const API_URL = process.env.NODE_ENV === 'production'
-        ? 'https://futuro-link.com/api'
-        : 'http://localhost:5172/api';
-    
-    const { register, handleSubmit, setValue, formState: { errors }, watch, clearErrors } = useForm({
+    const { register, handleSubmit, formState: { errors }, watch, clearErrors } = useForm({
         shouldUnregister: true,
     });
 
-    const formatarTelefone = (value) => {
-        const numeroLimpo = value.replace(/\D/g, '');
-
-        if (numeroLimpo.length <= 2) {
-            return `(${numeroLimpo}`;
-        } else if (numeroLimpo.length <= 7) {
-            return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2)}`;
-        } else if (numeroLimpo.length <= 10) {
-            return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 6)}-${numeroLimpo.slice(6)}`;
-        } else {
-            return `(${numeroLimpo.slice(0, 2)}) ${numeroLimpo.slice(2, 7)}-${numeroLimpo.slice(7, 11)}`;
-        }
-    };
-
-    const formatarCEP = (value) => {
-        const numeroLimpo = value.replace(/\D/g, '');
-        if (numeroLimpo.length > 5) {
-            return `${numeroLimpo.slice(0, 5)}-${numeroLimpo.slice(5, 8)}`;
-        }
-        return numeroLimpo;
-    };
-
-    const [telefoneDisplay, setTelefoneDisplay] = useState('');
-    const [cepDisplay, setCepDisplay] = useState('');
-    const opcaoEntrega = watch('opcaoEntrega');
-    
+    const opcaoEntrega = watch('opcaoEntrega')
     useEffect(() => {
         clearErrors();
     }, [opcaoEntrega, clearErrors]);
 
-    const [valorFrete, setValorFrete] = useState(0);
-    const [calculandoFrete, setCalculandoFrete] = useState(false);
-    const [processandoPedido, setProcessandoPedido] = useState(false);
-    
     console.log({ errors })
 
-    const calcularFrete = async (cepDestino) => {
-        if (!cepDestino || cepDestino.length < 8) return;
-        
-        setCalculandoFrete(true);
-        
-        try {
-            // Preparar itens para envio para API
-            const itensParaAPI = cartItems.map(item => ({
-                produtoId: item.id,
-                tamanho: item.tamanho,
-                quantidade: item.quantidade,
-                precoUnitario: parseFloat(item.preco.replace("R$", "").replace(",", "."))
-            }));
+    const gerarMensagemWhatsApp = (data) => {
+        let mensagem = `🛍️ *NOVO PEDIDO*\n\n`;
+        mensagem += `👤 *Dados do Cliente:*\n`;
+        mensagem += `• Nome: ${data.nome}\n`;
+        mensagem += `• Email: ${data.email}\n`;
+        mensagem += `• Telefone: ${data.telefone || 'Não informado'}\n\n`;
 
-            const response = await fetch(`${API_URL}/pedidos/calcular-frete`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    cep: cepDestino.replace(/\D/g, ''), // Limpar formatação
-                    itens: itensParaAPI
-                })
-            });
+        // Opção de entrega
+        mensagem += `📦 *Entrega:* ${data.opcaoEntrega === 'entrega' ? 'Delivery' : 'Retirada no local'}\n\n`;
 
-            if (response.ok) {
-                const result = await response.json();
-                setValorFrete(result.valorFrete);
-            } else {
-                console.error('Erro ao calcular frete');
-                alert('Erro ao calcular frete. Verifique o CEP.');
+        // Se for entrega, adicionar endereço
+        if (data.opcaoEntrega === 'entrega') {
+            mensagem += `🏠 *Endereço de Entrega:*\n`;
+            mensagem += `• CEP: ${data.cep}\n`;
+            mensagem += `• Rua: ${data.rua}, ${data.numero}\n`;
+            mensagem += `• Bairro: ${data.bairro}\n`;
+            mensagem += `• Cidade: ${data.cidade}\n`;
+            if (data.complemento) {
+                mensagem += `• Complemento: ${data.complemento}\n`;
             }
-        } catch (error) {
-            console.error('Erro ao calcular frete:', error);
-            alert('Erro ao calcular frete. Tente novamente.');
-        } finally {
-            setCalculandoFrete(false);
+            mensagem += `\n`;
         }
-    };
 
-    const finalizarPedidoComAPI = async (dadosFormulario) => {
-        setProcessandoPedido(true);
-        
-        try {
-            // Preparar dados do pedido para API
-            const itensParaAPI = cartItems.map(item => ({
-                produtoId: item.id,
-                tamanho: item.tamanho,
-                quantidade: item.quantidade,
-                precoUnitario: parseFloat(item.preco.replace("R$", "").replace(",", "."))
-            }));
+        // Produtos do carrinho
+        mensagem += `🛒 *Produtos:*\n`;
+        cartItems.forEach((item, index) => {
+            mensagem += `${index + 1}. ${item.nome}\n`;
+            mensagem += `   • Tamanho: ${item.tamanho}\n`;
+            mensagem += `   • Quantidade: ${item.quantidade}\n`;
+            mensagem += `   • Preço: ${item.preco}\n\n`;
+        });
 
-            const pedidoData = {
-                clienteNome: dadosFormulario.nome,
-                clienteEmail: dadosFormulario.email,
-                clienteTelefone: dadosFormulario.telefone || '',
-                cep: dadosFormulario.cep ? dadosFormulario.cep.replace(/\D/g, '') : '',
-                endereco: dadosFormulario.rua ? 
-                    `${dadosFormulario.rua}, ${dadosFormulario.numero}${dadosFormulario.complemento ? ', ' + dadosFormulario.complemento : ''}` : 
-                    'Retirada no local',
-                cidade: dadosFormulario.cidade || '',
-                estado: dadosFormulario.estado || 'PE',
-                itens: itensParaAPI
-            };
+        // Total
+        const totalGeral = cartItems.reduce((acc, item) => {
+            const preco = parseFloat(item.preco.replace("R$", "").replace(",", "."));
+            return acc + preco * item.quantidade;
+        }, 0);
 
-            console.log('Enviando pedido:', pedidoData);
+        mensagem += `💰 *Total do Pedido: R$ ${totalGeral.toFixed(2).replace(".", ",")}*`;
 
-            const response = await fetch(`${API_URL}/pedidos`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(pedidoData)
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                console.log('Pedido criado:', result);
-                
-                if (result.urlPagamento) {
-                    window.location.href = result.urlPagamento;
-                } else {
-                    alert('Erro: URL de pagamento não retornada');
-                }
-            } else {
-                const error = await response.json();
-                console.error('Erro ao criar pedido:', error);
-                alert(`Erro ao criar pedido: ${error.erro || 'Erro desconhecido'}`);
-            }
-        } catch (error) {
-            console.error('Erro ao finalizar pedido:', error);
-            alert('Erro ao finalizar pedido. Tente novamente.');
-        } finally {
-            setProcessandoPedido(false);
-        }
+        return mensagem;
     };
 
     const onSubmit = async (data) => {
-        await finalizarPedidoComAPI(data);
+        const mensagem = gerarMensagemWhatsApp(data);
+        const numeroWhatsApp = "558197146120";
+        const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+        window.open(urlWhatsApp, '_blank');
     };
+
 
     const [isEditing, setIsEditing] = useState(true)
     const [formData] = useState({});
     const { cartItems, decreaseQuantity, increaseQuantity, removeFromCart } = useCart();
-
     const totalItens = cartItems.reduce((acc, item) => acc + item.quantidade, 0);
-    const totalProdutos = cartItems.reduce((acc, item) => {
+    const totalGeral = cartItems.reduce((acc, item) => {
         const preco = parseFloat(item.preco.replace("R$", "").replace(",", "."));
         return acc + preco * item.quantidade;
     }, 0);
-    const totalGeral = totalProdutos + (opcaoEntrega === 'entrega' ? valorFrete : 0);
 
     return (
         <div className='min-h-screen flex flex-col'>
@@ -255,73 +168,24 @@ const Shipping = () => {
                                                                     <input
                                                                         {...register('telefone', {
                                                                             required: true,
-                                                                            minLength: 14,
-                                                                            maxLength: 15,
-                                                                            pattern: /^\([0-9]{2}\)\s[0-9]{4,5}-[0-9]{4}$/
+                                                                            minLength: 10,
+                                                                            maxLength: 11,
+
                                                                         })}
                                                                         type='text'
                                                                         className={`w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
                                                                         name='telefone'
                                                                         id='telefone'
-                                                                        placeholder='(11) 91111-0000'
-                                                                        value={telefoneDisplay}
-                                                                        onChange={(e) => {
-                                                                            const valorDigitado = e.target.value;
-                                                                            const valorFormatado = formatarTelefone(valorDigitado);
-                                                                            setTelefoneDisplay(valorFormatado);
+                                                                        placeholder='11911110000'
 
-                                                                            // Atualiza o valor no react-hook-form apenas com números testando 
-                                                                            const valorLimpo = valorDigitado.replace(/\D/g, '');
-                                                                            setValue('telefone', valorLimpo);
-                                                                        }}
-                                                                        maxLength={15}
                                                                     />
                                                                     {errors?.telefone?.type === 'required' && (
                                                                         <p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>
                                                                     )}
-                                                                    {(errors?.telefone?.type === 'minLength' || errors?.telefone?.type === 'maxLength') && (
-                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Número deve ter entre 10 e 11 dígitos</p>
-                                                                    )}
+
                                                                     {errors?.telefone?.type === 'pattern' && (
                                                                         <p className='text-[#ff4848] text-sm font-semibold'>Apenas números são permitidos</p>
                                                                     )}
-                                                                </div>
-                                                            </section>
-
-                                                            <section className='flex md:flex-col md:gap-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='cep'>CEP</label>
-                                                                    <input
-                                                                        {...register('cep', { 
-                                                                            required: true,
-                                                                            validate: (value) => {
-                                                                                const numeroLimpo = value?.replace(/\D/g, '') || '';
-                                                                                return numeroLimpo.length === 8;
-                                                                            }
-                                                                        })}
-                                                                        type='text'
-                                                                        className={`w-full px-3 py-2 rounded-md ${errors.cep ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
-                                                                        name='cep'
-                                                                        id='cep'
-                                                                        placeholder='00000-000'
-                                                                        value={cepDisplay}
-                                                                        onChange={(e) => {
-                                                                            const valorDigitado = e.target.value;
-                                                                            const valorFormatado = formatarCEP(valorDigitado);
-                                                                            setCepDisplay(valorFormatado);
-
-                                                                            const valorLimpo = valorDigitado.replace(/\D/g, '');
-                                                                            setValue('cep', valorLimpo);
-
-                                                                            // Calcular frete quando CEP estiver completo
-                                                                            if (valorLimpo.length === 8) {
-                                                                                calcularFrete(valorLimpo);
-                                                                            }
-                                                                        }}
-                                                                        maxLength={9}
-                                                                    />
-                                                                    {errors?.cep?.type === 'required' && (<p className='text-[#ff4848] text-sm font-semibold'>CEP é obrigatório</p>)}
-                                                                    {errors?.cep?.type === 'validate' && (<p className='text-[#ff4848] text-sm font-semibold'>CEP deve ter 8 dígitos</p>)}
                                                                 </div>
                                                             </section>
 
@@ -392,31 +256,6 @@ const Shipping = () => {
                                                                     />
                                                                 </div>
                                                             </section>
-                                                            {/*
-                                                            <section className='flex md:flex-col md:gap-2 w-full mt-2 gap-5 text-[#0D0D0D] font-grotesk'>
-                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={handleSubmit((data) => {
-                                                                            setFormData(data);
-
-                                                                            if (isEditing) {
-                                                                                // salvando os dados editados
-                                                                                console.log("Dados do cliente salvos:", data);
-                                                                                setIsEditing(false);
-                                                                            } else {
-                                                                                // entrando em modo de edição
-                                                                                setIsEditing(true);
-                                                                            }
-                                                                        })}
-                                                                        className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
-                                                                    >
-                                                                        {isEditing ? 'Salvar' : 'Editar'}
-                                                                    </button>
-
-                                                                </div>
-                                                            </section>
-                                                            */}
                                                         </>
                                                     )}
                                                     {opcaoEntrega === 'retirada' && (
@@ -464,60 +303,8 @@ const Shipping = () => {
                                                                     )}
                                                                 </div>
 
-                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <label htmlFor='telefone'>Telefone</label>
-                                                                    <input
-                                                                        {...register('telefone', {
-                                                                            required: true,
-                                                                            minLength: 14,
-                                                                            maxLength: 15,
-                                                                            pattern: /^\([0-9]{2}\)\s[0-9]{4,5}-[0-9]{4}$/
-                                                                        })}
-                                                                        type='text'
-                                                                        className={`w-full px-3 py-2 rounded-md ${errors.telefone ? 'outline outline-[1.5px] outline-[#ff4848]' : 'border border-slate-200'}`}
-                                                                        name='telefone'
-                                                                        id='telefone'
-                                                                        placeholder='(11) 91111-0000'
-                                                                        value={telefoneDisplay}
-                                                                        onChange={(e) => {
-                                                                            const valorDigitado = e.target.value;
-                                                                            const valorFormatado = formatarTelefone(valorDigitado);
-                                                                            setTelefoneDisplay(valorFormatado);
 
-                                                                            // Atualiza o valor no react-hook-form apenas com números
-                                                                            const valorLimpo = valorDigitado.replace(/\D/g, '');
-                                                                            setValue('telefone', valorLimpo);
-                                                                        }}
-                                                                        maxLength={15}
-                                                                    />
-                                                                    {errors?.telefone?.type === 'required' && (
-                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Telefone é obrigatório</p>
-                                                                    )}
-                                                                    {(errors?.telefone?.type === 'minLength' || errors?.telefone?.type === 'maxLength') && (
-                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Número deve ter entre 10 e 11 dígitos</p>
-                                                                    )}
-                                                                    {errors?.telefone?.type === 'pattern' && (
-                                                                        <p className='text-[#ff4848] text-sm font-semibold'>Apenas números são permitidos</p>
-                                                                    )}
-                                                                </div>
                                                             </section>
-                                                            {/*
-                                                            <section className='flex md:flex-col md:gap-2 mt-2 w-full gap-5 text-[#0D0D0D] font-grotesk'>
-                                                                <div className='flex flex-col gap-1 mb-2 w-full'>
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={handleSubmit((data) => {
-                                                                            onSubmit(data);
-                                                                            setFormData(data);
-                                                                            setIsEditing(false);
-                                                                        })}
-                                                                        className='px-3 py-[6px] rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
-                                                                    >
-                                                                        {isEditing ? 'Salvar' : 'Editar'}
-                                                                    </button>
-                                                                </div>
-                                                            </section>
-                                                            */}
                                                         </>
                                                     )}
                                                 </form>
@@ -525,41 +312,25 @@ const Shipping = () => {
                                         </div>
                                     </div>
 
-                                    <section className='w-[33%] md-lg:w-full'>
+                                    <section className='w-[33%] md-lg:w-full '>{/* resumo do pedido */}
                                         <div className='pl-3 md-lg:pl-0 md-lg:mt-5'>
-                                            <div className='bg-white font-grotesk text-[#0D0D0D] flex flex-col p-3 rounded-md'>
+                                            <div className='bg-white font-grotesk text-[#0D0D0D] flex flex-col p-3 rounded-md '>
                                                 <h2 className='text-lg font-bold'>Resumo do Pedido</h2>
                                                 <div className='flex justify-between mt-2'>
-                                                    <span>Produtos ({totalItens})</span>
-                                                    <span>R$ {totalProdutos.toFixed(2)}</span>
+                                                    <span>Produtos</span>
+                                                    <span>{totalItens}</span>
                                                 </div>
-                                                
                                                 <div className='flex justify-between mt-2'>
-                                                    <span>Frete</span>
-                                                    <span>
-                                                        {opcaoEntrega === 'retirada' ? 'R$ 0,00' :
-                                                         calculandoFrete ? 'Calculando...' : 
-                                                         valorFrete > 0 ? `R$ ${valorFrete.toFixed(2)}` : 'Digite o CEP'}
-                                                    </span>
-                                                </div>
-                                                
-                                                <hr className='my-2' />
-                                                <div className='flex justify-between mt-2 font-bold'>
                                                     <span>Total</span>
                                                     <span>R$ {totalGeral.toFixed(2)}</span>
                                                 </div>
-                                                
                                                 <button
-                                                    onClick={handleSubmit(onSubmit)}
-                                                    disabled={processandoPedido || (opcaoEntrega === 'entrega' && valorFrete === 0)}
-                                                    className={`px-5 py-[6px] mt-3 rounded-sm font-bold transition-colors ${
-                                                        processandoPedido || (opcaoEntrega === 'entrega' && valorFrete === 0)
-                                                            ? 'bg-gray-400 cursor-not-allowed text-gray-600' 
-                                                            : 'bg-black text-[#F2A541] hover:shadow-[#F2A541] hover:shadow-lg'
-                                                    }`}
-                                                >
-                                                    {processandoPedido ? 'Processando...' : 'Ir para Pagamento'}
-                                                </button>
+                                                    onClick={handleSubmit((data) => {
+                                                        onSubmit(data);
+
+                                                    })}
+                                                    className='px-5 py-[6px] mt-3 rounded-sm hover:shadow-[#F2A541] hover:shadow-lg bg-black text-[#F2A541]'
+                                                >Finalizar Pedido</button>
                                             </div>
                                         </div>
                                     </section>
@@ -705,60 +476,63 @@ const Shipping = () => {
                             <div className='w-full flex flex-wrap'>
                                 <div className='w-[67%] md-lg:w-full'>
                                     <div className='flex flex-col gap-3'>
-                                        {cartItems.map((item, index) => (
-                                            <div key={index} className='bg-white p-10 shadow-sm rounded-md'>
-                                                <div className="flex justify-between items-center pb-3">
-                                                    <h2 className='text-[#0D0D0D] text-lg font-bold font-grotesk'>Informações da Compra</h2>
+                                        {cartItems.map((item, index) => {
 
-                                                    {/* Ícone visível no desktop */}
-                                                    <span
-                                                        onClick={() => removeFromCart(item.id, item.tamanho)}
-                                                        className='hidden md:inline text-red-600 font-semibold cursor-pointer'
-                                                    >
-                                                        <FaTrashAlt />
-                                                    </span>
-                                                </div>
+                                            return (
+                                                <div key={index} className='bg-white p-10 shadow-sm rounded-md'>
+                                                    <div className="flex justify-between items-center pb-3">
+                                                        <h2 className='text-[#0D0D0D] text-lg font-bold font-grotesk'>Informações da Compra</h2>
 
-                                                <div className="flex justify-between items-center w-full md:flex-col">
-                                                    <div className="flex items-center md:flex-col">
-                                                        <img
-                                                            src={imgFrente}
-                                                            alt={item.nome}
-                                                            className="w-[150px]"
-                                                        />
+                                                        {/* Ícone visível no desktop */}
+                                                        <span
+                                                            onClick={() => removeFromCart(item.id, item.tamanho)}
+                                                            className='hidden md:inline text-red-600 font-semibold cursor-pointer'
+                                                        >
+                                                            <FaTrashAlt />
+                                                        </span>
+                                                    </div>
 
-                                                        <li className="flex flex-col justify-center gap-2 font-grotesk">
-                                                            <strong>{item.nome} | Tamanho: {item.tamanho}</strong>
-                                                            {item.preco}
+                                                    <div className="flex justify-between items-center w-full md:flex-col">
+                                                        <div className="flex items-center md:flex-col gap-4">
+                                                            <img
+                                                                src={item.imagemFrente}
+                                                                alt={item.nome}
+                                                                className="w-[150px]"
+                                                            />
 
-                                                            {/* Link "Remover" visível apenas no mobile */}
-                                                            <span
-                                                                onClick={() => removeFromCart(item.id, item.tamanho)}
-                                                                className="md:hidden text-sm text-red-600 font-semibold cursor-pointer hover:underline mt-4"
+                                                            <li className="flex flex-col justify-center gap-2 font-grotesk">
+                                                                <strong>{item.nome} | Tamanho: {item.tamanho}</strong>
+                                                                {item.preco}
+
+                                                                {/* Link "Remover" visível apenas no mobile */}
+                                                                <span
+                                                                    onClick={() => removeFromCart(item.id, item.tamanho)}
+                                                                    className="md:hidden text-sm text-red-600 font-semibold cursor-pointer hover:underline mt-4"
+                                                                >
+                                                                    Remover
+                                                                </span>
+                                                            </li>
+                                                        </div>
+
+                                                        <div className="flex items-center gap-2 cursor-pointer md:mt-3 md:justify-between">
+                                                            <button
+                                                                onClick={() => decreaseQuantity(item.id, item.tamanho)}
+                                                                className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
                                                             >
-                                                                Remover
-                                                            </span>
-                                                        </li>
-                                                    </div>
-
-                                                    <div className="flex items-center gap-2 cursor-pointer md:mt-3 md:justify-between">
-                                                        <button
-                                                            onClick={() => decreaseQuantity(item.id, item.tamanho)}
-                                                            className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
-                                                        >
-                                                            -
-                                                        </button>
-                                                        <span className="font-semibold w-6 text-center">{item.quantidade}</span>
-                                                        <button
-                                                            onClick={() => increaseQuantity(item.id, item.tamanho)}
-                                                            className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
-                                                        >
-                                                            +
-                                                        </button>
+                                                                -
+                                                            </button>
+                                                            <span className="font-semibold w-6 text-center">{item.quantidade}</span>
+                                                            <button
+                                                                onClick={() => increaseQuantity(item.id, item.tamanho)}
+                                                                className="px-3 py-1 bg-[#d6932e] hover:bg-[#a86f20] text-white font-bold rounded-lg transition-colors shadow-md hover:shadow-lg"
+                                                            >
+                                                                +
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </div>
