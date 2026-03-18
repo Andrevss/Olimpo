@@ -7,6 +7,9 @@ import { Link } from 'react-router-dom';
 import { FaTrashAlt } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 
+// URL base da API (pode ser sobrescrita via .env)
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5259';
+
 const Shipping = () => {
 
     const { register, handleSubmit, setValue, formState: { errors }, watch, clearErrors } = useForm({
@@ -108,13 +111,104 @@ const Shipping = () => {
         return mensagem;
     };
 
-    const onSubmit = async (data) => {
-        const mensagem = gerarMensagemWhatsApp(data);
-        const numeroWhatsApp = "558197146120";
-        const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
-        window.open(urlWhatsApp, '_blank');
-    };
+    const buildOrderPayload = (data) => ({
+        nomeCompleto: data.nome,
+        email: data.email,
+        telefone: data.telefone,
+        cep: data.cep || '',
+        rua: data.rua,
+        numero: data.numero,
+        bairro: data.bairro,
+        cidade: data.cidade,
+        estado: data.estado || '',
+        complemento: data.complemento || '',
+        items: cartItems.map((item) => ({
+            productId: item.id,
+            quantity: item.quantidade,
+        })),
+    });
 
+    const onSubmit = async (data) => {
+        const payload = buildOrderPayload(data);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/Orders`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+
+            const responseText = await response.text();
+            let result;
+
+            try {
+                result = responseText ? JSON.parse(responseText) : null;
+            } catch (parseError) {
+                // Se não for JSON válido, mantém o texto bruto
+                result = responseText;
+            }
+
+            if (!response.ok) {
+                // Tenta extrair mensagens de validação (padrão ASP.NET / ProblemDetails)
+                let detailedMessage = '';
+
+                if (result && typeof result === 'object') {
+                    if (result.errors) {
+                        const allErrors = Object.values(result.errors)
+                            .flat()
+                            .join('\n');
+                        detailedMessage = allErrors;
+                    } else if (result.detail) {
+                        detailedMessage = result.detail;
+                    } else if (result.title) {
+                        detailedMessage = result.title;
+                    } else if (result.message) {
+                        detailedMessage = result.message;
+                    }
+                }
+
+                console.error('Erro da API ao criar pedido:', {
+                    status: response.status,
+                    body: result,
+                    payload,
+                });
+
+                alert(
+                    detailedMessage
+                        ? `Erro ao criar pedido (HTTP ${response.status}):\n${detailedMessage}`
+                        : `Erro ao criar pedido (HTTP ${response.status}). Verifique os dados e tente novamente.`
+                );
+
+                // Em erros 4xx/5xx da API, não cai pro WhatsApp, deixa o usuário corrigir
+                return;
+            }
+
+            // Tenta ler a URL de pagamento nos formatos mais comuns
+            const redirectUrl =
+                result && typeof result === 'object'
+                    ? result.paymentUrl ||
+                    result.PaymentUrl ||
+                    (result.data && (result.data.paymentUrl || result.data.PaymentUrl))
+                    : null;
+
+            if (redirectUrl) {
+                window.location.href = redirectUrl; // redireciona pro checkout do Mercado Pago
+                return;
+            }
+
+            console.warn('Resposta da API sem URL de pagamento:', result);
+            alert('Pedido criado, mas não foi possível abrir o pagamento.');
+        } catch (err) {
+            console.error(err);
+            alert('Ocorreu um erro ao iniciar o pagamento. Tente novamente.');
+
+            // Fallback opcional para o fluxo antigo do WhatsApp
+            const mensagem = gerarMensagemWhatsApp(data);
+            const numeroWhatsApp = "558197146120";
+            const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
+            window.open(urlWhatsApp, '_blank');
+        }
+    };
 
     const [isEditing, setIsEditing] = useState(true)
     const [formData] = useState({});
